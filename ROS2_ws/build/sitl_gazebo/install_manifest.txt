@@ -1,0 +1,1 @@
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/sitl_gazebo/lib/libgazebo_motor_model_ros.so

@@ -1,0 +1,68 @@
+[0.008s] Invoking command in '/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/motor_speeds_pub': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/wolowizard/Morphing-Drone-sim/ROS2_ws/src/motor_speeds_pub -DCMAKE_INSTALL_PREFIX=/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub
+[0.044s] -- The C compiler identification is GNU 11.4.0
+[0.080s] -- The CXX compiler identification is GNU 11.4.0
+[0.085s] -- Detecting C compiler ABI info
+[0.130s] -- Detecting C compiler ABI info - done
+[0.139s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.139s] -- Detecting C compile features
+[0.140s] -- Detecting C compile features - done
+[0.143s] -- Detecting CXX compiler ABI info
+[0.197s] -- Detecting CXX compiler ABI info - done
+[0.205s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.205s] -- Detecting CXX compile features
+[0.206s] -- Detecting CXX compile features - done
+[0.208s] -- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.311s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.378s] -- Found rclcpp: 16.0.12 (/opt/ros/humble/share/rclcpp/cmake)
+[0.405s] -- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.409s] -- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.417s] -- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.431s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.447s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.478s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.480s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.540s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[0.558s] -- Found FastRTPS: /opt/ros/humble/include  
+[0.583s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.588s] -- Looking for pthread.h
+[0.635s] -- Looking for pthread.h - found
+[0.635s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[0.684s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[0.685s] -- Found Threads: TRUE  
+[0.719s] -- Found ament_lint_auto: 0.12.12 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[0.771s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[0.772s] -- Configured cppcheck include dirs: $<BUILD_INTERFACE:/home/wolowizard/Morphing-Drone-sim/ROS2_ws/src/motor_speeds_pub/include>
+[0.772s] -- Configured cppcheck exclude dirs and/or files: 
+[0.772s] -- Added test 'lint_cmake' to check CMake code style
+[0.773s] -- Added test 'uncrustify' to check C / C++ code style
+[0.773s] -- Configured uncrustify additional arguments: 
+[0.773s] -- Added test 'xmllint' to check XML markup files
+[0.774s] -- Configuring done
+[0.782s] -- Generating done
+[0.785s] -- Build files have been written to: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/motor_speeds_pub
+[0.791s] Invoked command in '/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/motor_speeds_pub' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/wolowizard/Morphing-Drone-sim/ROS2_ws/src/motor_speeds_pub -DCMAKE_INSTALL_PREFIX=/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub
+[0.792s] Invoking command in '/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/motor_speeds_pub': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/motor_speeds_pub -- -j8 -l8
+[0.826s] [ 50%] [32mBuilding CXX object CMakeFiles/motor_speeds_pub.dir/src/motor_speeds_pub.cpp.o[0m
+[3.699s] [100%] [32m[1mLinking CXX executable motor_speeds_pub[0m
+[3.828s] [100%] Built target motor_speeds_pub
+[3.838s] Invoked command in '/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/motor_speeds_pub' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/motor_speeds_pub -- -j8 -l8
+[3.839s] Invoking command in '/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/motor_speeds_pub': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/motor_speeds_pub
+[3.844s] -- Install configuration: ""
+[3.844s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/lib/motor_speeds_pub/motor_speeds_pub
+[3.845s] -- Set runtime path of "/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/lib/motor_speeds_pub/motor_speeds_pub" to ""
+[3.845s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/ament_index/resource_index/package_run_dependencies/motor_speeds_pub
+[3.845s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/ament_index/resource_index/parent_prefix_path/motor_speeds_pub
+[3.845s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/environment/ament_prefix_path.sh
+[3.845s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/environment/ament_prefix_path.dsv
+[3.845s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/environment/path.sh
+[3.845s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/environment/path.dsv
+[3.845s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/local_setup.bash
+[3.846s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/local_setup.sh
+[3.846s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/local_setup.zsh
+[3.846s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/local_setup.dsv
+[3.846s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/package.dsv
+[3.846s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/ament_index/resource_index/packages/motor_speeds_pub
+[3.846s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/cmake/motor_speeds_pubConfig.cmake
+[3.846s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/cmake/motor_speeds_pubConfig-version.cmake
+[3.846s] -- Installing: /home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/package.xml
+[3.849s] Invoked command in '/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/motor_speeds_pub' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/motor_speeds_pub

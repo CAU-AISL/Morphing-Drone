@@ -1,0 +1,16 @@
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/lib/motor_speeds_pub/motor_speeds_pub
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/ament_index/resource_index/package_run_dependencies/motor_speeds_pub
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/ament_index/resource_index/parent_prefix_path/motor_speeds_pub
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/environment/ament_prefix_path.sh
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/environment/ament_prefix_path.dsv
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/environment/path.sh
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/environment/path.dsv
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/local_setup.bash
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/local_setup.sh
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/local_setup.zsh
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/local_setup.dsv
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/package.dsv
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/ament_index/resource_index/packages/motor_speeds_pub
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/cmake/motor_speeds_pubConfig.cmake
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/cmake/motor_speeds_pubConfig-version.cmake
+/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/motor_speeds_pub/share/motor_speeds_pub/package.xml

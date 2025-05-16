@@ -1,0 +1,4 @@
+source;share/morphing_description/local_setup.bash
+source;share/morphing_description/local_setup.dsv
+source;share/morphing_description/local_setup.sh
+source;share/morphing_description/local_setup.zsh

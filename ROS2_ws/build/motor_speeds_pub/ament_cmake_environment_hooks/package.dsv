@@ -1,0 +1,4 @@
+source;share/motor_speeds_pub/local_setup.bash
+source;share/motor_speeds_pub/local_setup.dsv
+source;share/motor_speeds_pub/local_setup.sh
+source;share/motor_speeds_pub/local_setup.zsh
