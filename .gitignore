@@ -1,0 +1,47 @@
+# ROS2 workspace
+ROS2_ws/build
+ROS2_ws/install
+ROS2_ws/log
+
+# MATLAB
+MATLAB/.vscode
+MATLAB/*.asv
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+__MACOSX
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.nfs*
+
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.env
+*.venv
+
+# Logs
+*.log
+*.out
+*.err
+
+# IDEs and editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
