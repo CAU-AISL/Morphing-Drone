@@ -1,6 +1,0 @@
-Invoking command in '/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/sitl_gazebo': /usr/bin/cmake /home/wolowizard/Morphing-Drone-sim/ROS2_ws/src/sitl_gazebo -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCMAKE_INSTALL_PREFIX=/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/sitl_gazebo
-Invoked command in '/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/sitl_gazebo' returned '0': /usr/bin/cmake /home/wolowizard/Morphing-Drone-sim/ROS2_ws/src/sitl_gazebo -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCMAKE_INSTALL_PREFIX=/home/wolowizard/Morphing-Drone-sim/ROS2_ws/install/sitl_gazebo
-Invoking command in '/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/sitl_gazebo': /usr/bin/cmake --build /home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/sitl_gazebo -- -j8 -l8
-Invoked command in '/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/sitl_gazebo' returned '0': /usr/bin/cmake --build /home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/sitl_gazebo -- -j8 -l8
-Invoking command in '/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/sitl_gazebo': /usr/bin/cmake --install /home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/sitl_gazebo
-Invoked command in '/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/sitl_gazebo' returned '0': /usr/bin/cmake --install /home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/sitl_gazebo

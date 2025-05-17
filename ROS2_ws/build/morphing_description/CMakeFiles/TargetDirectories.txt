@@ -1,9 +1,0 @@
-/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/morphing_description/CMakeFiles/uninstall.dir
-/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/morphing_description/CMakeFiles/morphing_description_uninstall.dir
-/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/morphing_description/CMakeFiles/test.dir
-/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/morphing_description/CMakeFiles/edit_cache.dir
-/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/morphing_description/CMakeFiles/rebuild_cache.dir
-/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/morphing_description/CMakeFiles/list_install_components.dir
-/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/morphing_description/CMakeFiles/install.dir
-/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/morphing_description/CMakeFiles/install/local.dir
-/home/wolowizard/Morphing-Drone-sim/ROS2_ws/build/morphing_description/CMakeFiles/install/strip.dir
