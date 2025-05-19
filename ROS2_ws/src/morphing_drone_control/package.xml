@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd"
+             schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>morphing_drone_control</name>
+  <version>0.0.0</version>
+  <description>TODO: Package description</description>
+  <maintainer email="mina45097128@gmail.com">woodaengtang</maintainer>
+  <license>Apache-2.0</license>
+
+  <!-- 1) 빌드툴 의존성 -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+
+  <!-- 2) 런타임 의존성 (모두 <depend>로 통합) -->
+  <depend>rclpy</depend>
+  <depend>sensor_msgs</depend>      <!-- IMU, GPS, Magnetometer -->
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+
+  <!-- 3) 테스트 의존성 -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <!-- 순수 Python + ament_python 방식 -->
+    <build_type>ament_python</build_type>
+  </export>
+</package>
