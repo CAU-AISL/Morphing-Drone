@@ -3,6 +3,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import Imu
 from sensor_msgs.msg import NavSatFix
 from sensor_msgs.msg import MagneticField
+from std_msgs.msg import Float32MultiArray
 
 from .guidance_manager import GuidanceManager
 from .mode_controller import ModeController
@@ -20,6 +21,10 @@ class DroneState:
         self.x_dot_hat = 0.0
         self.y_dot_hat = 0.0
         self.z_dot_hat = 0.0
+        
+        self.x_ddot_hat = 0.0
+        self.y_ddot_hat = 0.0
+        self.z_ddot_hat = 0.0
 
         self.phi_hat   = 0.0
         self.theta_hat = 0.0
@@ -28,6 +33,10 @@ class DroneState:
         self.phi_dot_hat   = 0.0
         self.theta_dot_hat = 0.0
         self.psi_dot_hat   = 0.0
+        
+        self.phi_ddot_hat   = 0.0
+        self.theta_ddot_hat = 0.0
+        self.psi_ddot_hat   = 0.0
 
         self.alpha = 0.0
         self.beta  = 0.0
@@ -70,9 +79,9 @@ class MorphingDroneController(Node):
         self.drone_model = DroneModel(params)
         self.state = DroneState() 
         self.kf = KalmanFilter()
-        self.guidance = GuidanceManager(self)
+        self.guidance = GuidanceManager(self.state)
         self.mode_controller = ModeController(self.state)
-        self.motor_controller = MotorController(self.state)
+        self.motor_controller = MotorController(self, self.state)
 
         # 3) 센서 데이터 저장 변수
         self.imu_data = None
@@ -86,6 +95,7 @@ class MorphingDroneController(Node):
 
         # 주기적인 제어 루프 실행 (10ms마다 실행) -- gazebo에 맞춰 수정 필요
         self.timer = self.create_timer(0.01, self.control_loop)
+        
 
     def imu_callback(self, msg: Imu):
         self.imu_data = msg
@@ -120,22 +130,29 @@ class MorphingDroneController(Node):
         self.kf.predict()
         self.kf.update(self.imu_data, self.gps_data, self.mag_data)
         # state에 반영
-        est = self.kf.x_est  # 12×1 추정 상태 벡터
+        est = self.kf.x_est  # 18×1 추정 상태 벡터
+        
         self.state.x_hat = est[0]
         self.state.y_hat = est[1]
         self.state.z_hat = est[2]
         self.state.x_dot_hat = est[3]
         self.state.y_dot_hat = est[4]
         self.state.z_dot_hat = est[5]
-        self.state.phi_hat = est[6]
-        self.state.theta_hat = est[7]
-        self.state.psi_hat = est[8]
-        self.state.phi_dot_hat = est[9]
-        self.state.theta_dot_hat = est[10]
-        self.state.psi_dot_hat = est[11]
+        self.state.x_ddot_hat = est[6]
+        self.state.y_ddot_hat = est[7]
+        self.state.z_ddot_hat = est[8]
+        self.state.phi_hat = est[9]
+        self.state.theta_hat = est[10]
+        self.state.psi_hat = est[11]
+        self.state.phi_dot_hat = est[12]
+        self.state.theta_dot_hat = est[13]
+        self.state.psi_dot_hat = est[14]
+        self.state.phi_ddot_hat = est[15]
+        self.state.theta_ddot_hat = est[16]
+        self.state.psi_ddot_hat = est[17]
         
         # TODO: 3) Navigation - Fault Detection
-        # TODO: 4) Navigation - Mode Classification
+        # TODO: 4) Navigation - Mode Classification 
         # TODO: 5) Guidance
 
         # 6) Controller - 제어기에서 제어 출력 계산(w_d², α̇_d, β̇_d) 및 state에 업데이트
@@ -144,7 +161,8 @@ class MorphingDroneController(Node):
         # sub - 충돌 체크 
 
         # 7) 모터 명령어 생성 및 PWM 신호 전송
-        self.motor_controller.send_pwm(self.state)
+        self.motor_controller.send_commands(self.state.w_d, self.state.alpha, self.state.beta_dot)
+        
 
 def main(args=None):
     rclpy.init(args=args)               # ROS 2 초기화
