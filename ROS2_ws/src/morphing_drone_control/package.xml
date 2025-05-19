@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<?xml-model href="http://download.ros.org/schema/package_format3.xsd"
-             schematypens="http://www.w3.org/2001/XMLSchema"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>morphing_drone_control</name>
   <version>0.0.0</version>
@@ -14,9 +13,14 @@
 
   <!-- 2) 런타임 의존성 (모두 <depend>로 통합) -->
   <depend>rclpy</depend>
-  <depend>sensor_msgs</depend>      <!-- IMU, GPS, Magnetometer -->
+  <depend>sensor_msgs</depend>  <!-- IMU, GPS, Magnetometer -->
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
+  <!--
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  -->
 
   <!-- 3) 테스트 의존성 -->
   <test_depend>ament_lint_auto</test_depend>
