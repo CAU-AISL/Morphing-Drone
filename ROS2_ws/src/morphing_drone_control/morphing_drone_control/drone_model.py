@@ -33,22 +33,11 @@ class DroneModel:
         self.prev_time = None
         
         self.state = state #따라서 여기도 state 추가
+        self.F_ab = np.zeros((3,4))
+        self.Tau_ab = np.zeros((3,4))
+        self.I_total = None
         
     def update(self, state, w_m, beta, alpha):
-        phi, theta, psi = state.euler
-
-        self.F_ab = np.zeros((3,4))
-        for i in range(4):
-
-            self.F_ab[:,i] = [0, 0, -self.kf]
-
-        self.Tau_ab = np.zeros((3,4))
-        for i in range(4):
-            self.Tau_ab[:,i] = [0, 0, self.km]
-
-        self.I_tot = self.I_body.copy()
-
-        self.w_m = w_m.reshape((4,1))
         
         #time 계산
         now = time.time()
@@ -82,7 +71,7 @@ class DroneModel:
             cmTot =  p2x *((m_a * cmArm1 + m_a * cmArm2 + m_a * cmArm3 + m_a * cmArm4)/(m_t))
             alpha = self.state.alpha #alpha값 갖고옴
         if self.cur_I_total is None:
-            self.cur_Itotal = p2x@(rpy2rot(np.array([[0,0,alpha[0]]]))@self.I_arm1@rpy2rot(np.array([[0,0,alpha[0]]])).T
+            self.cur_I_total = p2x@(rpy2rot(np.array([[0,0,alpha[0]]]))@self.I_arm1@rpy2rot(np.array([[0,0,alpha[0]]])).T
             
             +m_a*np.array([
                 [(cmArm1[1]-cmTot[1])**2+(cmArm1[2]-cmTot[2])**2,   -(cmArm1[0]-cmTot[0])*(cmArm1[1]-cmTot[1]), -(cmArm1[0]-cmTot[0])*(cmArm1[2]-cmTot[2])],
@@ -116,6 +105,8 @@ class DroneModel:
             
             +self.I_body)@p2x
             self.prev_I_total=self.cur_I_total
+            self.I_total = self.cur_I_total
+            
         else:
             self.prev_I_total = self.cur_I_total
             self.cur_Itotal = p2x@(rpy2rot(np.array([[0,0,alpha[0]]]))@self.I_arm1@rpy2rot(np.array([[0,0,alpha[0]]])).T
@@ -152,4 +143,4 @@ class DroneModel:
             
             +self.I_body)@p2x.T
             
-        return self
+            self.I_total = self.cur_I_total

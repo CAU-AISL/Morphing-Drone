@@ -56,7 +56,7 @@ class ModeController:
         bl = self.drone_model.bl
         m_t = self.drone_model.m_t
         
-        w_m = self.state.w_m
+        w_m = self.state.w_d
         
         
         
@@ -284,6 +284,9 @@ class ModeController:
             ]).T # 팔 각도 고정
             self.state.beta_dot = u_control[4:,:]
             
+            #F_ab,Tau_ab 업데이트
+            self.drone_model.F_ab = F_a_b
+            self.drone_model.Tau_ab = Tau_a_b
         
         elif self.state.mode == 'Y':
             #Z-domain에서 v 값 계산
@@ -523,6 +526,9 @@ class ModeController:
             self.state.w_d = w_m + np.insert(u_control[0:3,:],i-1,np.zeros((0,1)),axis=0)*dt
             self.state.beta_dot = np.insert(u_control[3:6,:],i-1,np.zeros((0,1)),axis=0)
             
+            #F_ab Tau_ab 업데이트
+            self.drone_model.F_ab = F_a_b
+            self.drone_model.Tau_ab = Tau_a_b
             
         else:  # 'H'
             self.state.alpha = 0.0

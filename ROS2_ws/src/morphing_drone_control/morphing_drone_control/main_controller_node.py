@@ -12,6 +12,8 @@ from .kalman_filter import KalmanFilter
 from .fault_detection import FaultDetection
 from .drone_model import DroneModel
 
+import numpy as np
+
 class DroneState:
     def __init__(self):
         self.x_hat = 0.0
@@ -43,7 +45,9 @@ class DroneState:
         
         self.alpha_dot = 0.0
         self.beta_dot  = 0.0
-        self.w_d = None
+        self.w_d = np.array([
+            [0,0,0,0]
+        ]).T
 
         self.mode = 'X' 
         
