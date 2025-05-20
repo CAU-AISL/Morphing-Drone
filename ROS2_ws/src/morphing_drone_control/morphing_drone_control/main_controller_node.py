@@ -46,7 +46,7 @@ class DroneState:
         self.w_d = None
 
         self.mode = 'X' 
-
+        
         # 센서
 
 

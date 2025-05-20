@@ -8,6 +8,7 @@ class ModeController:
         self.state = state
         self.guidance = guidance
         self.drone_model = drone_model
+        self.failnum = failnum
 
     def update_abw(self):
     # 변수정의
@@ -45,9 +46,9 @@ class ModeController:
         psi_dddot = self.state.psi_dddot_hat
         
         #여기는 아직 없음 따로 추가해줘야 함
-        I_prev = self.state.prev_I_total
-        I_cur = self.state.cur_I_total
-        dt = self.state.current_time-self.state.prev_time
+        I_prev = self.drone_model.prev_I_total
+        I_cur = self.drone_model.cur_I_total
+        dt = self.drone_model.current_time-self.drone_model.prev_time
         
         kf = self.drone_model.kf
         km = self.drone_model.km 
@@ -425,8 +426,8 @@ class ModeController:
                 [0,0,1]
                 ])
             
-            acml = self.state.acml
-            m_a = self.state.m_a
+            acml = self.drone_model.acml
+            m_a = self.drone_model.m_a
             cmArm1 = [acml*np.cos(alpha[0])+bl, acml*np.sin(alpha[0]), 0].T
             cmArm2 = [-acml*np.sin(alpha[1]), acml*np.cos(alpha[1])+bl,  0].T
             cmArm3 = [-acml*np.cos(alpha[2])-bl, -acml*np.sin(alpha[2]), 0].T
