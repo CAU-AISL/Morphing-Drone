@@ -150,6 +150,6 @@ class DroneModel:
                 [-(cmArm4[0]-cmTot[0])*(cmArm4[2]-cmTot[2]),  -(cmArm4[1]-cmTot[1])*(cmArm4[2]-cmTot[2])   , (cmArm4[0]-cmTot[0])**2+(cmArm4[1]-cmTot[1])**2]
             ])
             
-            +self.I_body)@p2x
+            +self.I_body)@p2x.T
             
         return self
