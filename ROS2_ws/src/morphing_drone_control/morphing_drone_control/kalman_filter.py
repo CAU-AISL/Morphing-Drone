@@ -38,7 +38,7 @@ class KalmanFilter:
     def euler_acc(self, imu_msg, u: np.ndarray = None):  ## create roll,pitch reading from accelerometer
         acc = np.array([[imu_msg.linear_acceleration.x],
                         [imu_msg.linear_acceleration.y],
-                        [imu_msg.linear_acceleration.z]])
+                        [imu_msg.linear_acceleration.z]]) 
         acc_by_grav = acc - 1/self.m
         phi_acc = np.arctan2(acc_by_grav[1], acc_by_grav[2])
         theta_acc = np.arctan2(
