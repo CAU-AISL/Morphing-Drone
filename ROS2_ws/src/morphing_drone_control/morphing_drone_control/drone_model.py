@@ -82,11 +82,74 @@ class DroneModel:
             cmTot =  p2x *((m_a * cmArm1 + m_a * cmArm2 + m_a * cmArm3 + m_a * cmArm4)/(m_t))
             alpha = self.state.alpha #alpha값 갖고옴
         if self.cur_I_total is None:
-            self.cur_Itotal = p2x@rpy2rot(np.array([[0,0,alpha[0]]]))@self.I_arm1@rpy2rot(np.array([[0,0,alpha[0]]])).T
-            +m_a@np.array([
+            self.cur_Itotal = p2x@(rpy2rot(np.array([[0,0,alpha[0]]]))@self.I_arm1@rpy2rot(np.array([[0,0,alpha[0]]])).T
+            
+            +m_a*np.array([
                 [(cmArm1[1]-cmTot[1])**2+(cmArm1[2]-cmTot[2])**2,   -(cmArm1[0]-cmTot[0])*(cmArm1[1]-cmTot[1]), -(cmArm1[0]-cmTot[0])*(cmArm1[2]-cmTot[2])],
                 [-(cmArm1[0]-cmTot[0])*(cmArm1[1]-cmTot[1]),  (cmArm1[0]-cmTot[0])**2+(cmArm1[2]-cmTot[2])**2, -(cmArm1[1]-cmTot[1])*(cmArm1[2]-cmTot[2])],
                 [-(cmArm1[0]-cmTot[0])*(cmArm1[2]-cmTot[2]),  -(cmArm1[1]-cmTot[1])*(cmArm1[2]-cmTot[2])   , (cmArm1[0]-cmTot[0])**2+(cmArm1[1]-cmTot[1])**2]
             ])
-        
+            
+            + rpy2rot(np.array([[0,0,alpha[1]]]))@self.I_arm2@rpy2rot(np.array([[0,0,alpha[1]]])).T
+            
+            +m_a*np.array([
+                [(cmArm2[1]-cmTot[1])**2+(cmArm2[2]-cmTot[2])**2,   -(cmArm2[0]-cmTot[0])*(cmArm2[1]-cmTot[1]), -(cmArm2[0]-cmTot[0])*(cmArm2[2]-cmTot[2])],
+                [-(cmArm2[0]-cmTot[0])*(cmArm2[1]-cmTot[1]),  (cmArm2[0]-cmTot[0])**2+(cmArm2[2]-cmTot[2])**2, -(cmArm2[1]-cmTot[1])*(cmArm2[2]-cmTot[2])],
+                [-(cmArm2[0]-cmTot[0])*(cmArm2[2]-cmTot[2]),  -(cmArm2[1]-cmTot[1])*(cmArm2[2]-cmTot[2])   , (cmArm2[0]-cmTot[0])**2+(cmArm2[1]-cmTot[1])**2]
+            ])
+            
+            + rpy2rot(np.array([[0,0,alpha[2]]]))@self.I_arm3@rpy2rot(np.array([[0,0,alpha[2]]])).T
+            
+            + m_a*np.array([
+                [(cmArm3[1]-cmTot[1])**2+(cmArm3[2]-cmTot[2])**2,   -(cmArm3[0]-cmTot[0])*(cmArm3[1]-cmTot[1]), -(cmArm3[0]-cmTot[0])*(cmArm3[2]-cmTot[2])],
+                [-(cmArm3[0]-cmTot[0])*(cmArm3[1]-cmTot[1]),  (cmArm3[0]-cmTot[0])**2+(cmArm3[2]-cmTot[2])**2, -(cmArm3[1]-cmTot[1])*(cmArm3[2]-cmTot[2])],
+                [-(cmArm3[0]-cmTot[0])*(cmArm3[2]-cmTot[2]),  -(cmArm3[1]-cmTot[2])*(cmArm3[2]-cmTot[2])   , (cmArm3[0]-cmTot[0])**2+(cmArm3[1]-cmTot[1])**2]
+            ])
+            
+            +rpy2rot(np.array([[0,0,alpha[3]]]))@self.I_arm3@rpy2rot(np.array([[0,0,alpha[3]]])).T
+            
+            + m_a*np.array([
+                [(cmArm4[1]-cmTot[1])**2+(cmArm4[2]-cmTot[2])**2,   -(cmArm4[0]-cmTot[0])*(cmArm4[1]-cmTot[1]), -(cmArm4[0]-cmTot[0])*(cmArm4[2]-cmTot[2])],
+                [-(cmArm4[0]-cmTot[0])*(cmArm4[1]-cmTot[1]),  (cmArm4[0]-cmTot[0])**2+(cmArm4[2]-cmTot[2])**2, -(cmArm4[1]-cmTot[1])*(cmArm4[2]-cmTot[2])],
+                [-(cmArm4[0]-cmTot[0])*(cmArm4[2]-cmTot[2]),  -(cmArm4[1]-cmTot[1])*(cmArm4[2]-cmTot[2])   , (cmArm4[0]-cmTot[0])**2+(cmArm4[1]-cmTot[1])**2]
+            ])
+            
+            +self.I_body)@p2x
+            self.prev_I_total=self.cur_I_total
+        else:
+            self.prev_I_total = self.cur_I_total
+            self.cur_Itotal = p2x@(rpy2rot(np.array([[0,0,alpha[0]]]))@self.I_arm1@rpy2rot(np.array([[0,0,alpha[0]]])).T
+            
+            +m_a*np.array([
+                [(cmArm1[1]-cmTot[1])**2+(cmArm1[2]-cmTot[2])**2,   -(cmArm1[0]-cmTot[0])*(cmArm1[1]-cmTot[1]), -(cmArm1[0]-cmTot[0])*(cmArm1[2]-cmTot[2])],
+                [-(cmArm1[0]-cmTot[0])*(cmArm1[1]-cmTot[1]),  (cmArm1[0]-cmTot[0])**2+(cmArm1[2]-cmTot[2])**2, -(cmArm1[1]-cmTot[1])*(cmArm1[2]-cmTot[2])],
+                [-(cmArm1[0]-cmTot[0])*(cmArm1[2]-cmTot[2]),  -(cmArm1[1]-cmTot[1])*(cmArm1[2]-cmTot[2])   , (cmArm1[0]-cmTot[0])**2+(cmArm1[1]-cmTot[1])**2]
+            ])
+            
+            + rpy2rot(np.array([[0,0,alpha[1]]]))@self.I_arm2@rpy2rot(np.array([[0,0,alpha[1]]])).T
+            
+            +m_a*np.array([
+                [(cmArm2[1]-cmTot[1])**2+(cmArm2[2]-cmTot[2])**2,   -(cmArm2[0]-cmTot[0])*(cmArm2[1]-cmTot[1]), -(cmArm2[0]-cmTot[0])*(cmArm2[2]-cmTot[2])],
+                [-(cmArm2[0]-cmTot[0])*(cmArm2[1]-cmTot[1]),  (cmArm2[0]-cmTot[0])**2+(cmArm2[2]-cmTot[2])**2, -(cmArm2[1]-cmTot[1])*(cmArm2[2]-cmTot[2])],
+                [-(cmArm2[0]-cmTot[0])*(cmArm2[2]-cmTot[2]),  -(cmArm2[1]-cmTot[1])*(cmArm2[2]-cmTot[2])   , (cmArm2[0]-cmTot[0])**2+(cmArm2[1]-cmTot[1])**2]
+            ])
+            
+            + rpy2rot(np.array([[0,0,alpha[2]]]))@self.I_arm3@rpy2rot(np.array([[0,0,alpha[2]]])).T
+            
+            + m_a*np.array([
+                [(cmArm3[1]-cmTot[1])**2+(cmArm3[2]-cmTot[2])**2,   -(cmArm3[0]-cmTot[0])*(cmArm3[1]-cmTot[1]), -(cmArm3[0]-cmTot[0])*(cmArm3[2]-cmTot[2])],
+                [-(cmArm3[0]-cmTot[0])*(cmArm3[1]-cmTot[1]),  (cmArm3[0]-cmTot[0])**2+(cmArm3[2]-cmTot[2])**2, -(cmArm3[1]-cmTot[1])*(cmArm3[2]-cmTot[2])],
+                [-(cmArm3[0]-cmTot[0])*(cmArm3[2]-cmTot[2]),  -(cmArm3[1]-cmTot[2])*(cmArm3[2]-cmTot[2])   , (cmArm3[0]-cmTot[0])**2+(cmArm3[1]-cmTot[1])**2]
+            ])
+            
+            +rpy2rot(np.array([[0,0,alpha[3]]]))@self.I_arm3@rpy2rot(np.array([[0,0,alpha[3]]])).T
+            
+            + m_a*np.array([
+                [(cmArm4[1]-cmTot[1])**2+(cmArm4[2]-cmTot[2])**2,   -(cmArm4[0]-cmTot[0])*(cmArm4[1]-cmTot[1]), -(cmArm4[0]-cmTot[0])*(cmArm4[2]-cmTot[2])],
+                [-(cmArm4[0]-cmTot[0])*(cmArm4[1]-cmTot[1]),  (cmArm4[0]-cmTot[0])**2+(cmArm4[2]-cmTot[2])**2, -(cmArm4[1]-cmTot[1])*(cmArm4[2]-cmTot[2])],
+                [-(cmArm4[0]-cmTot[0])*(cmArm4[2]-cmTot[2]),  -(cmArm4[1]-cmTot[1])*(cmArm4[2]-cmTot[2])   , (cmArm4[0]-cmTot[0])**2+(cmArm4[1]-cmTot[1])**2]
+            ])
+            
+            +self.I_body)@p2x
+            
         return self
