@@ -29,4 +29,12 @@ def generate_launch_description():
                 # {'motor_rate_hz': 10.0},
             ]
         ),
+        
+        # 3) main_controller 노드
+        Node(
+            package='morphing_drone_control',
+            executable='main_controller',
+            name='morphing_drone_controller',
+            output='screen',
+        )
     ])
