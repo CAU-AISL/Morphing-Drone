@@ -82,6 +82,7 @@ class KalmanFilter:
         y = z_k - H.dot(self.x_est)
         self.x_est = self.x_est + K.dot(y)
         self.P     = (np.eye(12)-K.dot(H)).dot(self.P)
+        # print("x_est", self.x_est)
     # for 18 - state estimation we don't need jacobian calculation, just use the linear model from feedback linearization
     # def _compute_jacobian(self):
     #     phi, theta, psi = self.x_est[6,0], self.x_est[7,0], self.x_est[8,0]
@@ -138,6 +139,7 @@ class KalmanFilter:
 보조 IMU 융합: MATLAB 알고리즘의 두 IMU 보조 융합 구조를 단일 IMU 반복 사용으로 대체
 self.x_est로부터 φ, θ, ψ, ω를 추출
 수정 필요
+블라블라
 self.w_m, self.m_t, self.F_ab, self.Tau_ab, self.I_tot은 외부에서 설정 필요
 드론 고유 모델(질량 분포, 링크 길이 등)에 맞춰 dRpy2rot_*, skew, T 행렬 정의
 만약 w_m 입력 차원이 다르거나, 모터 개수가 다르면 B 행렬 크기 조정
