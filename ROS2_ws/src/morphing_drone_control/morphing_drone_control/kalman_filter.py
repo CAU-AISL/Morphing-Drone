@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import numpy as np
 from .rpy2rot import rpy2rot
 from .rpy2rot_derivative import dRpy2rot_dphi, dRpy2rot_dtheta, dRpy2rot_dpsi
@@ -26,19 +25,16 @@ class KalmanFilter:
             [np.zeros((1,3)), R_mag,           np.zeros((1,3))],
             [np.zeros((3,3)), np.zeros((3,1)), R_gyro         ]
         ])
-        
-        
-
         # # 동역학 파라미터 (외부에서 설정 필요)  18-state estimation 에서는 feedback linearization 에 사용된 모델 이용
         # self.m_t = None      # 총 질량
         # self.F_ab = None     # 3×4 힘 매핑 행렬
         # self.Tau_ab = None   # 3×4 토크 매핑 행렬
         # self.I_tot = None    # 3×3 관성 모멘트 행렬
         # self.w_m = None      # 입력 모터 속도 벡터 (4×1)
-    def euler_acc(self, imu_msg, u: np.ndarray = None):  ## create roll,pitch reading from accelerometer
+    def euler_acc(self, u: np.ndarray = None, imu_msg):  ## create roll,pitch reading from accelerometer
         acc = np.array([[imu_msg.linear_acceleration.x],
                         [imu_msg.linear_acceleration.y],
-                        [imu_msg.linear_acceleration.z]]) 
+                        [imu_msg.linear_acceleration.z]])
         acc_by_grav = acc - 1/self.m
         phi_acc = np.arctan2(acc_by_grav[1], acc_by_grav[2])
         theta_acc = np.arctan2(
