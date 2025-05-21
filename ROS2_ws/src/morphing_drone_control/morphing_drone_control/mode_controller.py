@@ -1,5 +1,4 @@
 import numpy as np
-import control
 from .rpy2rot import rpy2rot
 from .rpy2rot_derivative import RPY2Rot_derivative
 
@@ -187,7 +186,7 @@ class ModeController:
             ])
             
             v_lqr = K_lqr@error
-            
+            self.state.v = v_lqr
             #I_d 값 계산(Numerical method)
             I_inv_cur = np.linalg.inv(I_cur)
             I_inv_prev = np.linalg.inv(I_prev)
@@ -403,7 +402,7 @@ class ModeController:
             ])
             
             v_lqr = K_lqr@error
-            
+            self.state.v = v_lqr
             #Y configuration alpha_dot 논리, alpha 명령 줌 alpha_dot 아님
             failnum = self.fault_detection.failnum
             if 0 < failnum:
