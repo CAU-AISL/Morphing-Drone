@@ -31,7 +31,7 @@ class KalmanFilter:
         # self.Tau_ab = None   # 3×4 토크 매핑 행렬
         # self.I_tot = None    # 3×3 관성 모멘트 행렬
         # self.w_m = None      # 입력 모터 속도 벡터 (4×1)
-    def euler_acc(self, u: np.ndarray = None, imu_msg):  ## create roll,pitch reading from accelerometer
+    def euler_acc(self, imu_msg, u: np.ndarray = None, ):  ## create roll,pitch reading from accelerometer
         acc = np.array([[imu_msg.linear_acceleration.x],
                         [imu_msg.linear_acceleration.y],
                         [imu_msg.linear_acceleration.z]])
