@@ -1,10 +1,19 @@
-class MotorController:
-    def __init__(self, state):
-        self.state = state  
+from std_msgs.msg import Float32MultiArray
 
-    def update_pwm(self):
-        # 모터 PWM 신호 계산 및 명령
+class MotorController:
+    def __init__(self, node, state):
+        self._state = state  
+        self._node = node
         
+        self._motor_pub = node.create_publisher(Float32MultiArray, '/motor_wab', 10)
+
+    def send_commands(self):
+        data = []
+        data += [float(x) for x in self._state.w_d.flatten()]
+        data += [float(a) for a in self._state.alpha.flatten()]
+        data += [float(b) for b in self._state.beta_dot.flatten()]
         
-        
-        a = 0 # 오류나서 그냥 아무 코드나 추가해놓음.. 
+        msg = Float32MultiArray()
+        msg.data = data
+        self._motor_pub.publish(msg)
+        self._node.get_logger().info(f"[motor_controller] publish wab: {msg.data}")
