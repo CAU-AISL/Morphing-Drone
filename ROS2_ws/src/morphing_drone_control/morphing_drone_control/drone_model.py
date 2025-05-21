@@ -19,11 +19,6 @@ class DroneModel:
         self.km = params['DragCoeff']
         
         # 관성모멘트 베이스
-        R = np.array([
-            [0,1,0],
-            [-1,0,0],
-            [0,0,1]
-        ])
         Ixxa, Ixya,Ixza,Iyya,Iyza, Izza, Ixza = params['Ixxa'],params['Ixya'],params['Ixza'], params['Iyya'],params['Iyza'], params['Izza'], params['Ixza']
         self.I_arm1 = np.array([[Ixxa,Ixya,Ixza],[Ixya,Iyya,Iyza],[Ixza,Iyza,Izza]])
         self.I_arm2 = self.I_arm1
@@ -77,7 +72,7 @@ class DroneModel:
             alpha = self.state.alpha #alpha값 갖고옴
         if self.cur_I_total is None:
             self.cur_I_total = p2x@(
-            rpy2rot(np.array([[0,0,alpha[0]]]))@self.I_arm1@rpy2rot(np.array([[0,0,alpha[0]]])).T
+            rpy2rot(np.array([0,0,alpha[0]]))@self.I_arm1@rpy2rot(np.array([0,0,alpha[0]])).T
             
             +m_a*np.array([
                 [(cmArm1[1]-cmTot[1])**2+(cmArm1[2]-cmTot[2])**2,   -(cmArm1[0]-cmTot[0])*(cmArm1[1]-cmTot[1]), -(cmArm1[0]-cmTot[0])*(cmArm1[2]-cmTot[2])],
@@ -85,7 +80,7 @@ class DroneModel:
                 [-(cmArm1[0]-cmTot[0])*(cmArm1[2]-cmTot[2]),  -(cmArm1[1]-cmTot[1])*(cmArm1[2]-cmTot[2])   , (cmArm1[0]-cmTot[0])**2+(cmArm1[1]-cmTot[1])**2]
             ])
             
-            + rpy2rot(np.array([[0,0,alpha[1]]]))@self.I_arm2@rpy2rot(np.array([[0,0,alpha[1]]])).T
+            + rpy2rot(np.array([0,0,alpha[1]]))@self.I_arm2@rpy2rot(np.array([0,0,alpha[1]])).T
             
             +m_a*np.array([
                 [(cmArm2[1]-cmTot[1])**2+(cmArm2[2]-cmTot[2])**2,   -(cmArm2[0]-cmTot[0])*(cmArm2[1]-cmTot[1]), -(cmArm2[0]-cmTot[0])*(cmArm2[2]-cmTot[2])],
@@ -93,7 +88,7 @@ class DroneModel:
                 [-(cmArm2[0]-cmTot[0])*(cmArm2[2]-cmTot[2]),  -(cmArm2[1]-cmTot[1])*(cmArm2[2]-cmTot[2])   , (cmArm2[0]-cmTot[0])**2+(cmArm2[1]-cmTot[1])**2]
             ])
             
-            + rpy2rot(np.array([[0,0,alpha[2]]]))@self.I_arm3@rpy2rot(np.array([[0,0,alpha[2]]])).T
+            + rpy2rot(np.array([0,0,alpha[2]]))@self.I_arm3@rpy2rot(np.array([0,0,alpha[2]])).T
             
             + m_a*np.array([
                 [(cmArm3[1]-cmTot[1])**2+(cmArm3[2]-cmTot[2])**2,   -(cmArm3[0]-cmTot[0])*(cmArm3[1]-cmTot[1]), -(cmArm3[0]-cmTot[0])*(cmArm3[2]-cmTot[2])],
@@ -101,7 +96,7 @@ class DroneModel:
                 [-(cmArm3[0]-cmTot[0])*(cmArm3[2]-cmTot[2]),  -(cmArm3[1]-cmTot[2])*(cmArm3[2]-cmTot[2])   , (cmArm3[0]-cmTot[0])**2+(cmArm3[1]-cmTot[1])**2]
             ])
             
-            +rpy2rot(np.array([[0,0,alpha[3]]]))@self.I_arm3@rpy2rot(np.array([[0,0,alpha[3]]])).T
+            +rpy2rot(np.array([0,0,alpha[3]]))@self.I_arm3@rpy2rot(np.array([0,0,alpha[3]])).T
             
             + m_a*np.array([
                 [(cmArm4[1]-cmTot[1])**2+(cmArm4[2]-cmTot[2])**2,   -(cmArm4[0]-cmTot[0])*(cmArm4[1]-cmTot[1]), -(cmArm4[0]-cmTot[0])*(cmArm4[2]-cmTot[2])],
@@ -115,7 +110,7 @@ class DroneModel:
             
         else:
             self.prev_I_total = self.cur_I_total
-            self.cur_Itotal = p2x@(rpy2rot(np.array([[0,0,alpha[0]]]))@self.I_arm1@rpy2rot(np.array([[0,0,alpha[0]]])).T
+            self.cur_Itotal = p2x@(rpy2rot(np.array([0,0,alpha[0]]))@self.I_arm1@rpy2rot(np.array([0,0,alpha[0]])).T
             
             +m_a*np.array([
                 [(cmArm1[1]-cmTot[1])**2+(cmArm1[2]-cmTot[2])**2,   -(cmArm1[0]-cmTot[0])*(cmArm1[1]-cmTot[1]), -(cmArm1[0]-cmTot[0])*(cmArm1[2]-cmTot[2])],
@@ -123,7 +118,7 @@ class DroneModel:
                 [-(cmArm1[0]-cmTot[0])*(cmArm1[2]-cmTot[2]),  -(cmArm1[1]-cmTot[1])*(cmArm1[2]-cmTot[2])   , (cmArm1[0]-cmTot[0])**2+(cmArm1[1]-cmTot[1])**2]
             ])
             
-            + rpy2rot(np.array([[0,0,alpha[1]]]))@self.I_arm2@rpy2rot(np.array([[0,0,alpha[1]]])).T
+            + rpy2rot(np.array([0,0,alpha[1]]))@self.I_arm2@rpy2rot(np.array([0,0,alpha[1]])).T
             
             +m_a*np.array([
                 [(cmArm2[1]-cmTot[1])**2+(cmArm2[2]-cmTot[2])**2,   -(cmArm2[0]-cmTot[0])*(cmArm2[1]-cmTot[1]), -(cmArm2[0]-cmTot[0])*(cmArm2[2]-cmTot[2])],
@@ -131,7 +126,7 @@ class DroneModel:
                 [-(cmArm2[0]-cmTot[0])*(cmArm2[2]-cmTot[2]),  -(cmArm2[1]-cmTot[1])*(cmArm2[2]-cmTot[2])   , (cmArm2[0]-cmTot[0])**2+(cmArm2[1]-cmTot[1])**2]
             ])
             
-            + rpy2rot(np.array([[0,0,alpha[2]]]))@self.I_arm3@rpy2rot(np.array([[0,0,alpha[2]]])).T
+            + rpy2rot(np.array([0,0,alpha[2]]))@self.I_arm3@rpy2rot(np.array([0,0,alpha[2]])).T
             
             + m_a*np.array([
                 [(cmArm3[1]-cmTot[1])**2+(cmArm3[2]-cmTot[2])**2,   -(cmArm3[0]-cmTot[0])*(cmArm3[1]-cmTot[1]), -(cmArm3[0]-cmTot[0])*(cmArm3[2]-cmTot[2])],
@@ -139,7 +134,7 @@ class DroneModel:
                 [-(cmArm3[0]-cmTot[0])*(cmArm3[2]-cmTot[2]),  -(cmArm3[1]-cmTot[2])*(cmArm3[2]-cmTot[2])   , (cmArm3[0]-cmTot[0])**2+(cmArm3[1]-cmTot[1])**2]
             ])
             
-            +rpy2rot(np.array([[0,0,alpha[3]]]))@self.I_arm3@rpy2rot(np.array([[0,0,alpha[3]]])).T
+            +rpy2rot(np.array([0,0,alpha[3]]))@self.I_arm3@rpy2rot(np.array([0,0,alpha[3]])).T
             
             + m_a*np.array([
                 [(cmArm4[1]-cmTot[1])**2+(cmArm4[2]-cmTot[2])**2,   -(cmArm4[0]-cmTot[0])*(cmArm4[1]-cmTot[1]), -(cmArm4[0]-cmTot[0])*(cmArm4[2]-cmTot[2])],
