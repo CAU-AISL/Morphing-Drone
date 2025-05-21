@@ -1,9 +1,11 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSProfile
 from sensor_msgs.msg import Imu
 from sensor_msgs.msg import NavSatFix
 from sensor_msgs.msg import MagneticField
 from std_msgs.msg import Float32MultiArray
+import numpy as np
 
 from .guidance_manager import GuidanceManager
 from .mode_controller import ModeController
@@ -38,12 +40,12 @@ class DroneState:
         self.theta_ddot_hat = 0.0
         self.psi_ddot_hat   = 0.0
 
-        self.alpha = 0.0
-        self.beta  = 0.0
+        self.alpha = np.zeros((4, 1))
+        self.alpha_dot = np.zeros((4, 1))
+        self.beta  = np.zeros((4, 1))
+        self.beta_dot  = np.zeros((4, 1))
         
-        self.alpha_dot = 0.0
-        self.beta_dot  = 0.0
-        self.w_d = None
+        self.w_d = np.zeros((4, 1))
 
         self.mode = 'X' 
 
@@ -89,7 +91,8 @@ class MorphingDroneController(Node):
         self.mag_data = None
 
         # 4) 센서 구독
-        self.create_subscription(Imu, '/imu/data', self.imu_callback, 10)
+        qos_profile = QoSProfile(depth=10)
+        self.imu_subscriber = self.create_subscription(Imu, '/imu/data', self.imu_callback, qos_profile)
         self.create_subscription(NavSatFix, '/gps/fix', self.gps_callback, 10)
         self.create_subscription(MagneticField, '/magnetometer/data', self.mag_callback, 10)
 
@@ -99,7 +102,7 @@ class MorphingDroneController(Node):
 
     def imu_callback(self, msg: Imu):
         self.imu_data = msg
-
+        
     def gps_callback(self, msg: NavSatFix):
         self.gps_data = msg
 
