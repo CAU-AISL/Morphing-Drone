@@ -60,18 +60,21 @@ class MorphingDroneController(Node):
         
         # 1) 파라미터 선언 -- 수정필요
         param_defaults = {
-            'bodyMass':      1.00,
-            'armMass':       0.10,
-            'armcmLength':   0.05,
-            'armLength':     0.15,
-            'bodyLength':    0.10,
-            'Ixxa':          0.002,
-            'Iyya':          0.002,
-            'Izza':          0.004,
-            'Ixza':          0.0001,
-            'Ixxb':          0.005,
-            'Iyyb':          0.005,
-            'Izzb':          0.008,
+            'bodyMass':      1.289,
+            'armMass':       0.139,
+            'armcmLength':   0.139113738822933,
+            'armLength':     0.1595,
+            'bodyLength':    0.114552,
+            'Ixxa':          2.190839539142159e-04,
+            'Ixya':          -4.301600091384631e-05,
+            'Ixza':          6.131159813951677e-05,
+            'Iyya':          3.986596961705956e-04,
+            'Iyza':          6.459346045048527e-05,
+            'Izza':          3.329336946986987e-04,
+            'Ixxb':          0.001313892,
+            'Iyyb':          0.001655877,
+            'Izzb':          0.002162122,
+            'Ixzb':          -1.835200000000000e-05,
             'ThrustCoeff':   1e-5,
             'DragCoeff':     1e-6
         }
