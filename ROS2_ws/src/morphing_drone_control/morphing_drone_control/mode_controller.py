@@ -66,11 +66,11 @@ class ModeController:
             
             #Z-domain에서 v 값 계산
             z_current = np.array([
-                x,x_dot,x_ddot,y,y_dot,y_ddot,z,z_dot,z_ddot,phi,phi_dot,phi_ddot,theta,theta_dot,theta_ddot,psi, psi_dot, psi_ddot
-            ]).reshape(-1, 1)
+                [x,x_dot,x_ddot,y,y_dot,y_ddot,z,z_dot,z_ddot,phi,phi_dot,phi_ddot,theta,theta_dot,theta_ddot,psi, psi_dot, psi_ddot]
+            ]).T
             z_ref = np.array([
-                x_d,0,0,y_d,0,0,z_d,0,0,phi_d,0,0,theta_d,0,0,psi_d,0,0
-            ]).reshape(-1, 1)
+                [x_d,0,0,y_d,0,0,z_d,0,0,phi_d,0,0,theta_d,0,0,psi_d,0,0]
+            ]).T
             error = z_ref-z_current
                     #이런식으로 K_lqr 계산, 미리 offline 계산
             '''
@@ -199,25 +199,22 @@ class ModeController:
                 [0,0,1]
             ])
             F_a_b = p2x@(np.array([
-                [0, kf*np.sin(beta[0]), -kf*np.cos(beta[0])],
-                [-kf*np.cos(alpha[1])*np.sin(beta[1]), -kf*np.sin(alpha[1])*np.sin(beta[1]), -kf*np.cos(beta[1])],
-                [0, -kf*np.sin(beta[2]), -kf*np.cos(beta[2])],
-                [kf*np.cos(alpha[3])*np.sin(beta[3]), kf*np.sin(alpha[3])*np.sin(beta[3]), -kf*np.cos(beta[3])]
+                [0, kf*np.sin(beta[0][0]), -kf*np.cos(beta[0][0])],
+                [-kf*np.cos(alpha[1][0])*np.sin(beta[1][0]), -kf*np.sin(alpha[1][0])*np.sin(beta[1][0]), -kf*np.cos(beta[1][0])],
+                [0, -kf*np.sin(beta[2][0]), -kf*np.cos(beta[2][0])],
+                [kf*np.cos(alpha[3][0])*np.sin(beta[3][0]), kf*np.sin(alpha[3][0])*np.sin(beta[3][0]), -kf*np.cos(beta[3][0])]
             ]).T)
             
             #Tau_a_b 값 계산 #bl에 1/sqrt(2) 안곱하는 이유 궁금
             Tau_a_b = p2x@(np.array([
-                [0, kf * (bl+al) * np.cos(beta[0]) + km*np.sin(beta[0]), kf * (bl+al) * np.sin(beta[0]) - km * np.cos(beta[0])],
-                [-kf* (bl+al*np.cos(alpha[1]))*np.cos(beta[1]) + km*np.cos(alpha[1])*np.sin(beta[1]), -kf*al*np.sin(alpha[1])*np.cos(beta[1])+km*np.sin(alpha[1])*np.sin(beta[1]),kf*al*(np.sin(alpha[1]))**2*np.sin(beta[1])+kf*(bl+al*np.cos(alpha[1]))*np.cos(alpha[1])*np.sin(beta[1])+ km*np.cos(beta[1]) ],
-                [0,  -kf*(bl+al)*np.cos(beta[2]) - km*np.sin(beta[2]),kf*(bl+al)*np.sin(beta[2])-km*np.cos(beta[2])],
-                [kf*(bl+al*np.cos(alpha[3]))*np.cos(beta[3])-km*np.cos(alpha[3])*np.sin(beta[3]), kf*al*np.sin(alpha[3])*np.cos(beta[3])-km*np.sin(alpha[3])*np.sin(beta[3]),kf*al*(np.sin(alpha[3]))**2*np.sin(beta[3])+kf*(bl+al*np.cos(alpha[3]))*np.cos(alpha[3])*np.sin(beta[3])+km*np.cos(beta[3])]
+                [0, kf * (bl+al) * np.cos(beta[0][0]) + km*np.sin(beta[0][0]), kf * (bl+al) * np.sin(beta[0][0]) - km * np.cos(beta[0][0])],
+                [-kf* (bl+al*np.cos(alpha[1][0]))*np.cos(beta[1][0]) + km*np.cos(alpha[1][0])*np.sin(beta[1][0]), -kf*al*np.sin(alpha[1][0])*np.cos(beta[1][0])+km*np.sin(alpha[1][0])*np.sin(beta[1][0]),kf*al*(np.sin(alpha[1][0]))**2*np.sin(beta[1][0])+kf*(bl+al*np.cos(alpha[1][0]))*np.cos(alpha[1][0])*np.sin(beta[1][0])+ km*np.cos(beta[1][0])],
+                [0,  -kf*(bl+al)*np.cos(beta[2][0]) - km*np.sin(beta[2][0]),kf*(bl+al)*np.sin(beta[2][0])-km*np.cos(beta[2][0])],
+                [kf*(bl+al*np.cos(alpha[3][0]))*np.cos(beta[3][0])-km*np.cos(alpha[3][0])*np.sin(beta[3][0]), kf*al*np.sin(alpha[3][0])*np.cos(beta[3][0])-km*np.sin(alpha[3][0])*np.sin(beta[3][0]),kf*al*(np.sin(alpha[3][0]))**2*np.sin(beta[3][0])+kf*(bl+al*np.cos(alpha[3][0]))*np.cos(alpha[3][0])*np.sin(beta[3][0])+km*np.cos(beta[3][0])]
             ]).T)
             
             #JR matrix 
-            R = rpy2rot(np.array([
-                phi,theta,psi
-                ])
-                )         # 3×3 회전 행렬
+            R = rpy2rot(phi,theta,psi)         # 3×3 회전 행렬
             R_T = R.T                      # RPY2Rot(obj.euler)'에 해당
 
             top_left = (1 / m_t) * R_T
@@ -236,7 +233,7 @@ class ModeController:
             top_right = np.zeros((3,3))
             bottom_left = np.zeros((3,3))
             #inv인지 zeros인지 확인
-            bottom_right = np.linalg.inv(I_d)
+            bottom_right = np.zeros((3,3))
             
             JRdot = np.block([
                 [top_left, top_right],
@@ -247,14 +244,14 @@ class ModeController:
             J_beta = np.vstack((F_a_b,Tau_a_b)) # 6*4 matrix
             
             top = p2x@np.array([
-                [0,  -kf*np.cos(alpha[1])*np.cos(beta[1])*w_m[1], 0, kf*np.cos(alpha[3])*np.cos(beta[3])*w_m[3]],
-                [kf*np.cos(beta[0])*w_m[0],  -kf*np.sin(alpha[1])*np.cos(beta[1])*w_m[1], -kf*np.cos(beta[2])*w_m[2], kf*np.sin(alpha[3])*np.cos(beta[3])*w_m[3]],
-                [kf*np.sin(beta[0])*w_m[0],kf*np.sin(beta[1])*w_m[1], kf*np.sin(beta[2])*w_m[2],kf*np.sin(beta[3])*w_m[3]]
+                [0,  -kf*np.cos(alpha[1][0])*np.cos(beta[1][0])*w_m[1][0], 0, kf*np.cos(alpha[3][0])*np.cos(beta[3][0])*w_m[3][0]],
+                [kf*np.cos(beta[0][0])*w_m[0][0],  -kf*np.sin(alpha[1][0])*np.cos(beta[1][0])*w_m[1][0], -kf*np.cos(beta[2][0])*w_m[2][0], kf*np.sin(alpha[3][0])*np.cos(beta[3][0])*w_m[3][0]],
+                [kf*np.sin(beta[0][0])*w_m[0][0],kf*np.sin(beta[1][0])*w_m[1][0], kf*np.sin(beta[2][0])*w_m[2][0],kf*np.sin(beta[3][0])*w_m[3][0]]
             ])
             bottom = p2x@np.array([
-                [0,kf*(bl+al*np.cos(alpha[1]))*np.sin(beta[1])*w_m[1] + km*np.cos(alpha[1])*np.cos(beta[1])*w_m[1],0,-kf*(bl+al*np.cos(alpha[3]))*np.sin(beta[3])*w_m[3] - km*np.cos(alpha[3])*np.cos(beta[3])*w_m[3]],
-                [(-kf*(bl+al)*np.sin(beta[0]) + km*np.cos(beta[0]))*w_m[0], (kf*al*np.sin(alpha[1])*np.sin(beta[1])*w_m[1] + km*np.sin(alpha[1])*np.cos(beta[1]))*w_m[1],(kf*(bl+al)*np.sin(beta[2]) - km*np.cos(beta[2]))*w_m[2], -(kf*al*np.sin(alpha[3])*np.sin(beta[3]) + km*np.sin(alpha[3])*np.cos(beta[3]))*w_m[3]],
-                [(kf*(bl+al)*np.cos(beta[0]) + km*np.sin(beta[0]))*w_m[0], (kf*al*(np.sin(alpha[1]))**2*np.cos(beta[1]) + kf*(bl+al*np.cos(alpha[1]))*np.cos(alpha[1])*np.cos(beta[1]) - km*np.sin(beta[1]))*w_m[1], (kf*(bl+al)*np.cos(beta[2]) + km*np.sin(beta[2]))*w_m[2], (kf*al*(np.sin(alpha[3]))**2*np.cos(beta[3]) + kf*(bl+al*np.cos(alpha[3]))*np.cos(alpha[3])*np.cos(beta[3]) - km*np.sin(beta[3]))*w_m[3]]
+                [0,kf*(bl+al*np.cos(alpha[1][0]))*np.sin(beta[1][0])*w_m[1][0] + km*np.cos(alpha[1][0])*np.cos(beta[1][0])*w_m[1][0],0,-kf*(bl+al*np.cos(alpha[3][0]))*np.sin(beta[3][0])*w_m[3][0] - km*np.cos(alpha[3][0])*np.cos(beta[3][0])*w_m[3][0]],
+                [(-kf*(bl+al)*np.sin(beta[0][0]) + km*np.cos(beta[0][0]))*w_m[0][0], (kf*al*np.sin(alpha[1][0])*np.sin(beta[1][0])*w_m[1][0] + km*np.sin(alpha[1][0])*np.cos(beta[1][0]))*w_m[1][0],(kf*(bl+al)*np.sin(beta[2][0]) - km*np.cos(beta[2][0]))*w_m[2][0], -(kf*al*np.sin(alpha[3][0])*np.sin(beta[3][0]) + km*np.sin(alpha[3][0])*np.cos(beta[3][0]))*w_m[3][0]],
+                [(kf*(bl+al)*np.cos(beta[0][0]) + km*np.sin(beta[0][0]))*w_m[0][0], (kf*al*(np.sin(alpha[1][0]))**2*np.cos(beta[1][0]) + kf*(bl+al*np.cos(alpha[1][0]))*np.cos(alpha[1][0])*np.cos(beta[1][0]) - km*np.sin(beta[1][0]))*w_m[1][0], (kf*(bl+al)*np.cos(beta[2][0]) + km*np.sin(beta[2][0]))*w_m[2][0], (kf*al*(np.sin(alpha[3][0]))**2*np.cos(beta[3][0]) + kf*(bl+al*np.cos(alpha[3][0]))*np.cos(alpha[3][0])*np.cos(beta[3][0]) - km*np.sin(beta[3][0]))*w_m[3][0]]
             ])
             J_betadot = np.vstack((top,bottom)) #6*4 matrix
             
@@ -269,11 +266,11 @@ class ModeController:
             u_control = B_pinv@inner
             
             #Control input 만듬 state class에 있는 것이 맞을지 검토해봐야 할 듯, dt가 처음엔 0일텐데 흠 -> 프로펠러 안돌텐데 그 후엔 dt바뀌니까 되겠네
-            self.state.w_d = w_m + u_control[0:4,:]*dt
+            self.state.w_d = w_m + u_control[0:4]*dt
             self.state.alpha = np.array([
                 [0,0,0,0]
-            ]).reshape(-1,1) # 팔 각도 고정
-            self.state.beta_dot = u_control[4:,:]
+            ]).T # 팔 각도 고정
+            self.state.beta_dot = u_control[4:]
             
             #F_ab,Tau_ab 업데이트
             self.drone_model.F_ab = F_a_b
@@ -282,7 +279,7 @@ class ModeController:
         elif self.state.mode == 'Y':
             #Z-domain에서 v 값 계산
             z_current = np.array([
-                x,x_dot,x_ddot,y,y_dot,y_ddot,z_dot,z_ddot,phi,phi_dot,phi_ddot,theta,theta_dot,theta_ddot,psi, psi_dot, psi_ddot
+                x,x_dot,x_ddot,y,y_dot,y_ddot,z,z_dot,z_ddot,phi,phi_dot,phi_ddot,theta,theta_dot,theta_ddot,psi, psi_dot, psi_ddot
             ]).T
             z_ref = np.array([
                 x_d,0,0,y_d,0,0,z_d,0,0,phi_d,0,0,theta_d,0,0,psi_d,0,0
@@ -452,8 +449,7 @@ class ModeController:
                         ])
             
             #JR matrix 6*6
-            R = rpy2rot(np.array([
-                phi,theta,psi]))         # 3×3 회전 행렬
+            R = rpy2rot(phi,theta,psi)         # 3×3 회전 행렬
             R_T = R.T                      # RPY2Rot(obj.euler)'에 해당
 
             top_left = (1 / m_t) * R_T
@@ -473,6 +469,7 @@ class ModeController:
             top_right = np.zeros((3,3))
             bottom_left = np.zeros((3,3))
             bottom_right = np.zeros((3,3))
+            
             
             JRdot = np.block([
                 [top_left, top_right],

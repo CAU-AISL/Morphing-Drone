@@ -92,7 +92,7 @@ class MorphingDroneController(Node):
         self.kf = KalmanFilter(self.drone_model, self.state)
         
         self.guidance = GuidanceManager(self.state)
-        self.fault_detection = FaultDetection()
+        self.fault_detection = FaultDetection(self.state)
         self.mode_controller = ModeController(self.state,self.guidance,self.drone_model,self.fault_detection)
         
         self.motor_controller = MotorController(self, self.state)
@@ -130,8 +130,8 @@ class MorphingDroneController(Node):
 
     def control_loop(self):
         # 모든 센서 데이터가 준비되었는지 확인
-        # if self.imu_data is None or self.gps_data is None or self.mag_data is None:
-        #     return
+        if self.imu_data is None or self.gps_data is None or self.mag_data is None:
+            return
         
         # 1) 동역학 파라미터 업데이트 -- 실제 식에 맞게 수정 필요
         # DroneState 클래스에서 w_d를 numpy (4,1) 형태로 저장해야 함 #여기 순서좀
@@ -143,7 +143,7 @@ class MorphingDroneController(Node):
         self.kf.m_t    = self.drone_model.m_t
         self.kf.F_ab   = self.drone_model.F_ab
         self.kf.Tau_ab = self.drone_model.Tau_ab
-        self.kf.I_tot  = self.drone_model.I_tot
+        self.kf.I_tot  = self.drone_model.I_total
         self.kf.w_m    = self.state.w_d
         
         # 2) Kalman Filter 추청 및 현재 상태에 반영
