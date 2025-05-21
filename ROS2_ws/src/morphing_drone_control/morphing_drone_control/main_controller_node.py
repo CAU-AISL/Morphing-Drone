@@ -1,10 +1,12 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSProfile
 from sensor_msgs.msg import Imu
 from sensor_msgs.msg import NavSatFix
 from sensor_msgs.msg import MagneticField
 from std_msgs.msg import Float32MultiArray
 import tf_transformations
+import numpy as np
 
 
 from .guidance_manager import GuidanceManager
@@ -13,8 +15,6 @@ from .motor_controller import MotorController
 from .kalman_filter import KalmanFilter
 from .fault_detection import FaultDetection
 from .drone_model import DroneModel
-
-import numpy as np
 
 class DroneState:
     def __init__(self):
@@ -42,18 +42,16 @@ class DroneState:
         self.theta_ddot_hat = 0.0
         self.psi_ddot_hat   = 0.0
 
-        self.alpha = 0.0
-        self.beta  = 0.0
-        
-        self.alpha_dot = 0.0
-        self.beta_dot  = 0.0
-        self.w_d = np.array([
-            0,0,0,0
-        ]).reshape(-1,1)
 
         self.v =np.array([
             0,0,0,0,0,0
         ]).reshape(-1,1)
+
+        self.alpha = np.zeros((4, 1))
+        self.alpha_dot = np.zeros((4, 1))
+        self.beta  = np.zeros((4, 1))
+        self.beta_dot  = np.zeros((4, 1))
+        self.w_d = np.zeros((4, 1))
 
         self.mode = 'X' 
         
@@ -106,12 +104,13 @@ class MorphingDroneController(Node):
         self.create_subscription(NavSatFix, '/gps/gazebo_ros_gps_sensor/out', self.gps_callback, 10)
         # Magnetometer is synthesized from IMU yaw
 
+
         # Control loop timer (10ms)
         self.timer = self.create_timer(0.01, self.control_loop)
 
     def imu_callback(self, msg: Imu):
         # Store IMU data
-        self.state.imu_data = msg
+        self.imu_data = msg
         # Extract yaw from quaternion
         q = msg.orientation
         _, _, yaw = tf_transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])
@@ -124,7 +123,7 @@ class MorphingDroneController(Node):
         self.mag_data = mag
 
     def gps_callback(self, msg: NavSatFix):
-        self.state.gps_data = msg
+        self.gps_data = msg
 
     def control_loop(self):
         # 모든 센서 데이터가 준비되었는지 확인
@@ -148,7 +147,21 @@ class MorphingDroneController(Node):
         # 2) Kalman Filter 추청 및 현재 상태에 반영
         # 예측, 갱신
         self.kf.predict(self.state.v)
-        self.kf.update(self.imu_data, self.gps_data, self.mag_data, self.state.w_d)
+        self.kf.update(self.
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       , self.gps_data, self.mag_data, self.state.w_d)
         # state에 반영
         est = self.kf.x_est  # 18×1 추정 상태 벡터
         
