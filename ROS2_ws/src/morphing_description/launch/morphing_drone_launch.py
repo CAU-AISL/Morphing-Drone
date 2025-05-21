@@ -14,7 +14,7 @@ def generate_launch_description():
         # 1) Gazebo 실행 (ROS API 플러그인 없이도, 
         #    플러그인이 자체적으로 rclcpp spin() 을 띄우므로 OK)
         ExecuteProcess(
-            cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_factory.so', sdf],
+            cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_factory.so','-s', 'libgazebo_ros_init.so', sdf],
             output='screen'
         ),
 

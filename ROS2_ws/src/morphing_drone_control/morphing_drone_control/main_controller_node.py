@@ -14,6 +14,8 @@ from .kalman_filter import KalmanFilter
 from .fault_detection import FaultDetection
 from .drone_model import DroneModel
 
+import numpy as np
+
 class DroneState:
     def __init__(self):
         self.x_hat = 0.0
@@ -44,11 +46,11 @@ class DroneState:
         self.alpha_dot = np.zeros((4, 1))
         self.beta  = np.zeros((4, 1))
         self.beta_dot  = np.zeros((4, 1))
-        
         self.w_d = np.zeros((4, 1))
 
-        self.mode = 'X' 
 
+        self.mode = 'X' 
+        
         # 센서
 
 
@@ -81,8 +83,11 @@ class MorphingDroneController(Node):
         self.drone_model = DroneModel(params)
         self.state = DroneState() 
         self.kf = KalmanFilter()
+        
         self.guidance = GuidanceManager(self.state)
-        self.mode_controller = ModeController(self.state)
+        self.fault_detection = FaultDetection(self.state)
+        self.mode_controller = ModeController(self.state,self.guidance,self.drone_model,self.fault_detection)
+        
         self.motor_controller = MotorController(self, self.state)
 
         # 3) 센서 데이터 저장 변수
@@ -156,7 +161,7 @@ class MorphingDroneController(Node):
         
         # TODO: 3) Navigation - Fault Detection
         # TODO: 4) Navigation - Mode Classification 
-        # TODO: 5) Guidance
+        # TODO: 5) Guidance(Ros2 와 Controller 좌표축 감안할것)
 
         # 6) Controller - 제어기에서 제어 출력 계산(w_d², α̇_d, β̇_d) 및 state에 업데이트
         self.mode_controller.update_abw()

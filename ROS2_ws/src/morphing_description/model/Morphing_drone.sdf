@@ -673,7 +673,7 @@
       </joint>
 
     
-
+      <!-- main 모터 -->
       <plugin name="motor1" filename="libgazebo_motor_model_ros.so">
         <robotNamespace>my_drone</robotNamespace>
         <jointName>prop1_joint</jointName>
@@ -690,6 +690,69 @@
         <robotNamespace>my_drone</robotNamespace>
         <jointName>prop4_joint</jointName>
       </plugin>
+
+      <!-- flare 모터 -->
+      <plugin name="motor_flare1" filename="libgazebo_motor_model_ros.so">
+        <robotNamespace>my_drone</robotNamespace>
+        <jointName>flare1_link_joint</jointName>
+      </plugin>
+      <plugin name="motor_flare2" filename="libgazebo_motor_model_ros.so">
+        <robotNamespace>my_drone</robotNamespace>
+        <jointName>flare2_link_joint</jointName>
+      </plugin>
+      <plugin name="motor_flare3" filename="libgazebo_motor_model_ros.so">
+        <robotNamespace>my_drone</robotNamespace>
+        <jointName>flare3_link_joint</jointName>
+      </plugin>
+      <plugin name="motor_flare4" filename="libgazebo_motor_model_ros.so">
+        <robotNamespace>my_drone</robotNamespace>
+        <jointName>flare4_link_joint</jointName>
+      </plugin>
+
+      <!-- tilt 모터 -->
+      <plugin name="motor_tilt1" filename="libgazebo_motor_model_ros.so">
+        <robotNamespace>my_drone</robotNamespace>
+        <jointName>tilt1_joint</jointName>
+      </plugin>
+      <plugin name="motor_tilt2" filename="libgazebo_motor_model_ros.so">
+        <robotNamespace>my_drone</robotNamespace>
+        <jointName>tilt2_joint</jointName>
+      </plugin>
+      <plugin name="motor_tilt3" filename="libgazebo_motor_model_ros.so">
+        <robotNamespace>my_drone</robotNamespace>
+        <jointName>tilt3_joint</jointName>
+      </plugin>
+      <plugin name="motor_tilt4" filename="libgazebo_motor_model_ros.so">
+        <robotNamespace>my_drone</robotNamespace>
+        <jointName>tilt4_joint</jointName>
+      </plugin>
+
+      <plugin name="joint_state_publisher"
+              filename="libgazebo_ros_joint_state_publisher.so">
+        <robotNamespace>my_drone</robotNamespace>
+        <!-- publish_rate 가 아니라 update_rate -->
+        <update_rate>50</update_rate>
+
+        <!-- jointName 이 아니라 joint_name -->
+        <joint_name>prop1_joint</joint_name>
+        <joint_name>prop2_joint</joint_name>
+        <joint_name>prop3_joint</joint_name>
+        <joint_name>prop4_joint</joint_name>
+
+        <!-- flare -->
+        <joint_name>flare1_link_joint</joint_name>
+        <joint_name>flare2_link_joint</joint_name>
+        <joint_name>flare3_link_joint</joint_name>
+        <joint_name>flare4_link_joint</joint_name>
+
+        <!-- tilt -->
+        <joint_name>tilt1_joint</joint_name>
+        <joint_name>tilt2_joint</joint_name>
+        <joint_name>tilt3_joint</joint_name>
+        <joint_name>tilt4_joint</joint_name>
+      </plugin>
+
+      
 
     </model>
   </world>

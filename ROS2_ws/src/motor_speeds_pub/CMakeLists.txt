@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 add_executable(motor_speeds_pub src/motor_speeds_pub.cpp)
 target_include_directories(motor_speeds_pub PUBLIC
@@ -19,6 +20,7 @@ ament_target_dependencies(
   motor_speeds_pub
   "rclcpp"
   "std_msgs"
+  "sensor_msgs"
 )
 
 install(TARGETS motor_speeds_pub
