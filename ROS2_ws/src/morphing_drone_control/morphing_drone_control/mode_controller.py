@@ -1,5 +1,4 @@
 import numpy as np
-import control
 from .rpy2rot import rpy2rot
 from .rpy2rot_derivative import RPY2Rot_derivative
 
@@ -197,7 +196,7 @@ class ModeController:
             ])
             
             v_lqr = K_lqr@error
-            
+            self.state.v = v_lqr
             #I_d 값 계산(Numerical method)
             I_inv_cur = np.linalg.inv(I_cur)
             I_inv_prev = np.linalg.inv(I_prev)
@@ -210,7 +209,7 @@ class ModeController:
                 [0,0,1]
             ])
             F_a_b = p2x@np.array([
-                [0, kf*np.sin(beta[0]), -kf*np.cos(beta[0])]
+                [0, kf*np.sin(beta[0]), -kf*np.cos(beta[0])],
                 [-kf*np.cos(alpha[1])*np.sin(beta[1]), -kf*np.sin(alpha[1])*np.sin(beta[1]), -kf*np.cos(beta[1])],
                 [0, -kf*np.sin(beta[2]), -kf*np.cos(beta[2])],
                 [kf*np.cos(alpha[3])*np.sin(beta[3]), kf*np.sin(alpha[3])*np.sin(beta[3]), -kf*np.cos(beta[3])]
@@ -411,7 +410,7 @@ class ModeController:
             ])
             
             v_lqr = K_lqr@error
-            
+            self.state.v = v_lqr
             #Y configuration alpha_dot 논리, alpha 명령 줌 alpha_dot 아님
             failnum = self.failnum
             if 0 < failnum:
@@ -444,7 +443,7 @@ class ModeController:
             
             #F_a_b 값 계산
             F_a_b = np.array([
-                [0, kf*np.sin(beta[0]), -kf*np.cos(beta[0])]
+                [0, kf*np.sin(beta[0]), -kf*np.cos(beta[0])],
                 [-kf*np.cos(alpha[1])*np.sin(beta[1]), -kf*np.sin(alpha[1])*np.sin(beta[1]), -kf*np.cos(beta[1])],
                 [0, -kf*np.sin(beta[2]), -kf*np.cos(beta[2])],
                 [kf*np.cos(alpha[3])*np.sin(beta[3]), kf*np.sin(alpha[3])*np.sin(beta[3]), -kf*np.cos(beta[3])]
@@ -456,7 +455,7 @@ class ModeController:
             Tau_a_b = p2x @ np.array([
                             [0,                                                                                                        kf*(bl+al-lcm),                                                                                 -km],
                             [-kf*(bl+al*np.cos(alpha[1]))*np.cos(beta[1]) + km*np.cos(alpha[1])*np.sin(beta[1]),     -kf*(al*np.sin(alpha[1])+lcm)*np.cos(beta[1])+km*np.sin(alpha[1])*np.sin(beta[1]),            kf*(al*np.sin(alpha[1])+lcm)*np.sin(alpha[1])*np.sin(beta[1])+kf*(bl+al*np.cos(alpha[1]))*np.cos(alpha[1])*np.sin(beta[1])+ km*np.cos(beta[1])],
-                            [                                       0,                                                          -kf*(bl+al+lcm)*np.cos(beta[2]) - km*np.sin(beta[2]),                                       kf*(bl+al+lcm)*np.sin(beta[2]) - km*np.cos(beta[2])]
+                            [                                       0,                                                          -kf*(bl+al+lcm)*np.cos(beta[2]) - km*np.sin(beta[2]),                                       kf*(bl+al+lcm)*np.sin(beta[2]) - km*np.cos(beta[2])],
                             [kf*(bl+al*np.cos(alpha[3]))*np.cos(beta[3])-km*np.cos(alpha[3])*np.sin(beta[3]),      kf*(al*np.sin(alpha[3])-lcm)*np.cos(beta[3])-km*np.sin(alpha[3])*np.sin(beta[3]),            kf*(al*np.sin(alpha[3])-lcm)*np.sin(alpha[3])*np.sin(beta[3])+kf*(bl+al*np.cos(alpha[3]))*np.cos(alpha[3])*np.sin(beta[3])+km*np.cos(beta[3])]
                         ])
             

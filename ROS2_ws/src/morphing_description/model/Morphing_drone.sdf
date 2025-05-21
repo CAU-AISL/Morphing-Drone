@@ -527,6 +527,118 @@
         </visual>
       </link>
 
+      <link name="imu_link">
+        <pose>0 0 0.001 0 0 0</pose>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.001 0.001 0.001</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0.5 0 1</ambient>
+            <diffuse>1 0.5 0 1</diffuse>
+            <specular>0.5 0.5 0.5 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.00001</mass>
+          <pose>0 0 0 0 0 0</pose>
+          <inertia>
+            <ixx>0.00000001</ixx>
+            <ixy>0.0</ixy>
+            <ixz>0.0</ixz>
+            <iyy>0.00000001</iyy>
+            <iyz>0.0</iyz>
+            <izz>0.00000001</izz>
+          </inertia>
+        </inertial>
+        <sensor name="imu_sensor" type="imu">
+          <pose>0 0 0 0 0 0</pose>
+          <always_on>true</always_on>
+          <update_rate>100</update_rate>
+          <imu>
+            <topic>imu</topic>
+            <update_rate>100</update_rate>
+            <orientation>
+              <noise>
+                <type>gaussian</type>
+                <mean>0.0</mean>
+                <stddev>0.01</stddev>
+              </noise>
+            </orientation>
+            <angular_velocity>
+              <noise>
+                <type>gaussian</type>
+                <mean>0.0</mean>
+                <stddev>0.1</stddev>
+              </noise>
+            </angular_velocity>
+            <linear_acceleration>
+              <noise>
+                <type>gaussian</type>
+                <mean>0.0</mean>
+                <stddev>0.1</stddev>
+              </noise>
+            </linear_acceleration>
+          </imu>
+          <plugin name="imu_plugin" filename="libgazebo_ros_imu_sensor.so">
+            <ros>
+              <namespace>/</namespace>
+              <argument>~</argument>
+            </ros>
+            <bodyName>imu_link</bodyName>
+            <topicName>imu</topicName>
+            <updateRate>100.0</updateRate>
+            <use_ned>true</use_ned>
+            <gaussianNoise>0.0</gaussianNoise>
+            <xyzOffset>0 0 0</xyzOffset>
+            <rpyOffset>0 0 0</rpyOffset>
+            <frameName>imu_link</frameName>
+            <initial_orientation_as_reference>true</initial_orientation_as_reference>
+          </plugin>
+        </sensor>
+      </link>
+      <link name="gps_link">
+        <pose>0 0 0.002 0 0 0</pose>
+        <sensor name="gps_sensor" type="gps">
+          <always_on>true</always_on>
+          <update_rate>5</update_rate>
+
+          <!-- legacy 위치 잡음 스펙 -->
+          <gps>
+            <horizontal_noise>0.5</horizontal_noise>
+            <vertical_noise>0.8</vertical_noise>
+          </gps>
+
+          <!-- ROS 2용 GPS 플러그인 -->
+          <plugin name="gazebo_ros_gps_sensor" filename="libgazebo_ros_gps_sensor.so">
+            <ros>
+              <!-- 네임스페이스 없이 순수 이름만 -->
+              <namespace>gps</namespace>
+            </ros>
+            <!-- body_link→gps_link 고정 프레임 -->
+            <frameName>gps_link</frameName>
+            <!-- 이 두 토픽이 생성됩니다 -->
+            <topicName>fix</topicName>
+            <velocityTopicName>vel</velocityTopicName>
+            <use_ned>true</use_ned>
+            <updateRate>5.0</updateRate>
+          </plugin>
+        </sensor>
+      </link>
+      <joint name="B2GPS" type="fixed">
+        <parent>body_link</parent>
+        <child>gps_link</child>
+        <pose>0 0 0 0 0 0</pose>
+      </joint>
+      <joint name="B2IMU" type="fixed">
+        <parent>body_link</parent>
+        <child>imu_link</child>
+        <pose>0 0 0 0 0 0</pose>
+      </joint>
+      
       <joint name="flare1_link_joint" type="revolute">
         <parent>body_link</parent>
         <child>flare1_link</child>

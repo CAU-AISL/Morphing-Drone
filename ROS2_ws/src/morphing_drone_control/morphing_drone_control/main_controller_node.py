@@ -5,7 +5,9 @@ from sensor_msgs.msg import Imu
 from sensor_msgs.msg import NavSatFix
 from sensor_msgs.msg import MagneticField
 from std_msgs.msg import Float32MultiArray
+import tf_transformations
 import numpy as np
+
 
 from .guidance_manager import GuidanceManager
 from .mode_controller import ModeController
@@ -13,8 +15,6 @@ from .motor_controller import MotorController
 from .kalman_filter import KalmanFilter
 from .fault_detection import FaultDetection
 from .drone_model import DroneModel
-
-import numpy as np
 
 class DroneState:
     def __init__(self):
@@ -42,12 +42,16 @@ class DroneState:
         self.theta_ddot_hat = 0.0
         self.psi_ddot_hat   = 0.0
 
+
+        self.v =np.array([
+            0,0,0,0,0,0
+        ]).reshape(-1,1)
+
         self.alpha = np.zeros((4, 1))
         self.alpha_dot = np.zeros((4, 1))
         self.beta  = np.zeros((4, 1))
         self.beta_dot  = np.zeros((4, 1))
         self.w_d = np.zeros((4, 1))
-
 
         self.mode = 'X' 
         
@@ -79,13 +83,13 @@ class MorphingDroneController(Node):
             self.declare_parameter(name, default)
         params = {name: self.get_parameter(name).value for name in param_defaults}
 
-        # 2) 상태, 필터 등 class 초기화
-        self.drone_model = DroneModel(params)
-        self.state = DroneState() 
-        self.kf = KalmanFilter()
+        # 2) 상태, 필터 등 class 
+        self.state = DroneState()
+        self.drone_model = DroneModel(params, self.state)
+        self.kf = KalmanFilter(self.drone_model, self.state)
         
         self.guidance = GuidanceManager(self.state)
-        self.fault_detection = FaultDetection(self.state)
+        self.fault_detection = FaultDetection()
         self.mode_controller = ModeController(self.state,self.guidance,self.drone_model,self.fault_detection)
         
         self.motor_controller = MotorController(self, self.state)
@@ -95,29 +99,36 @@ class MorphingDroneController(Node):
         self.gps_data = None
         self.mag_data = None
 
-        # 4) 센서 구독
-        qos_profile = QoSProfile(depth=10)
-        self.imu_subscriber = self.create_subscription(Imu, '/imu/data', self.imu_callback, qos_profile)
-        self.create_subscription(NavSatFix, '/gps/fix', self.gps_callback, 10)
-        self.create_subscription(MagneticField, '/magnetometer/data', self.mag_callback, 10)
+        # Subscribe to sensors
+        self.create_subscription(Imu, '/imu_plugin/out', self.imu_callback, 10)
+        self.create_subscription(NavSatFix, '/gps/gazebo_ros_gps_sensor/out', self.gps_callback, 10)
+        # Magnetometer is synthesized from IMU yaw
 
-        # 주기적인 제어 루프 실행 (10ms마다 실행) -- gazebo에 맞춰 수정 필요
+
+        # Control loop timer (10ms)
         self.timer = self.create_timer(0.01, self.control_loop)
-        
 
     def imu_callback(self, msg: Imu):
+        # Store IMU data
         self.imu_data = msg
-        
+        # Extract yaw from quaternion
+        q = msg.orientation
+        _, _, yaw = tf_transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])
+        # Synthesize magnetometer message with yaw
+        mag = MagneticField()
+        mag.header = msg.header
+        mag.magnetic_field.x = 0.0
+        mag.magnetic_field.y = 0.0
+        mag.magnetic_field.z = float(yaw)
+        self.mag_data = mag
+
     def gps_callback(self, msg: NavSatFix):
         self.gps_data = msg
 
-    def mag_callback(self, msg: MagneticField):
-        self.mag_data = msg
-
     def control_loop(self):
         # 모든 센서 데이터가 준비되었는지 확인
-        if self.imu_data is None or self.gps_data is None or self.mag_data is None:
-            return
+        # if self.imu_data is None or self.gps_data is None or self.mag_data is None:
+        #     return
         
         # 1) 동역학 파라미터 업데이트 -- 실제 식에 맞게 수정 필요
         # DroneState 클래스에서 w_d를 numpy (4,1) 형태로 저장해야 함
@@ -131,12 +142,26 @@ class MorphingDroneController(Node):
         self.kf.F_ab   = self.drone_model.F_ab
         self.kf.Tau_ab = self.drone_model.Tau_ab
         self.kf.I_tot  = self.drone_model.I_tot
-        self.kf.w_m    = self.drone_model.w_m
+        self.kf.w_m    = self.state.w_d
         
         # 2) Kalman Filter 추청 및 현재 상태에 반영
         # 예측, 갱신
-        self.kf.predict()
-        self.kf.update(self.imu_data, self.gps_data, self.mag_data)
+        self.kf.predict(self.state.v)
+        self.kf.update(self.
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       , self.gps_data, self.mag_data, self.state.w_d)
         # state에 반영
         est = self.kf.x_est  # 18×1 추정 상태 벡터
         
@@ -169,7 +194,8 @@ class MorphingDroneController(Node):
         # sub - 충돌 체크 
 
         # 7) 모터 명령어 생성 및 PWM 신호 전송
-        self.motor_controller.send_commands(self.state.w_d, self.state.alpha, self.state.beta_dot)
+        self.motor_controller.send_commands()
+        
         
 
 def main(args=None):
