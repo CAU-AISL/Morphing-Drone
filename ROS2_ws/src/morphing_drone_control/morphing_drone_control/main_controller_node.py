@@ -64,18 +64,21 @@ class MorphingDroneController(Node):
         
         # 1) 파라미터 선언 -- 수정필요
         param_defaults = {
-            'bodyMass':      1.00,
-            'armMass':       0.10,
-            'armcmLength':   0.05,
-            'armLength':     0.15,
-            'bodyLength':    0.10,
-            'Ixxa':          0.002,
-            'Iyya':          0.002,
-            'Izza':          0.004,
-            'Ixza':          0.0001,
-            'Ixxb':          0.005,
-            'Iyyb':          0.005,
-            'Izzb':          0.008,
+            'bodyMass':      1.289,
+            'armMass':       0.139,
+            'armcmLength':   0.139113738822933,
+            'armLength':     0.1595,
+            'bodyLength':    0.114552,
+            'Ixxa':          2.190839539142159e-04,
+            'Ixya':          -4.301600091384631e-05,
+            'Ixza':          6.131159813951677e-05,
+            'Iyya':          3.986596961705956e-04,
+            'Iyza':          6.459346045048527e-05,
+            'Izza':          3.329336946986987e-04,
+            'Ixxb':          0.001313892,
+            'Iyyb':          0.001655877,
+            'Izzb':          0.002162122,
+            'Ixzb':          -1.835200000000000e-05,
             'ThrustCoeff':   1e-5,
             'DragCoeff':     1e-6
         }
@@ -131,13 +134,12 @@ class MorphingDroneController(Node):
         #     return
         
         # 1) 동역학 파라미터 업데이트 -- 실제 식에 맞게 수정 필요
-        # DroneState 클래스에서 w_d를 numpy (4,1) 형태로 저장해야 함
+        # DroneState 클래스에서 w_d를 numpy (4,1) 형태로 저장해야 함 #여기 순서좀
         self.drone_model.update(
-            state=self.state,
-            w_m=self.state.w_d,
-            beta=self.state.beta,
             alpha=self.state.alpha
         )
+        
+        # 2) Kalman Filter 추청 및 현재 상태에 반영 이거 루프 마지막으로 보내야 F_ab,Tau_ab 계산 됨
         self.kf.m_t    = self.drone_model.m_t
         self.kf.F_ab   = self.drone_model.F_ab
         self.kf.Tau_ab = self.drone_model.Tau_ab
@@ -145,23 +147,10 @@ class MorphingDroneController(Node):
         self.kf.w_m    = self.state.w_d
         
         # 2) Kalman Filter 추청 및 현재 상태에 반영
+
         # 예측, 갱신
         self.kf.predict(self.state.v)
-        self.kf.update(self.
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       , self.gps_data, self.mag_data, self.state.w_d)
+        self.kf.update(self.imu_data, self.gps_data, self.mag_data, self.state.w_d)
         # state에 반영
         est = self.kf.x_est  # 18×1 추정 상태 벡터
         
