@@ -37,7 +37,7 @@ class DroneModel:
         self.Tau_ab = np.zeros((3,4))
         self.I_total = None
         
-    def update(self, state, w_m, beta, alpha):
+    def update(self, alpha):
         
         #time 계산
         now = time.time()

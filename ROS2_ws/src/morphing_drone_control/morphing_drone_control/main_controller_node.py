@@ -119,20 +119,17 @@ class MorphingDroneController(Node):
             return
         
         # 1) 동역학 파라미터 업데이트 -- 실제 식에 맞게 수정 필요
-        # DroneState 클래스에서 w_d를 numpy (4,1) 형태로 저장해야 함
+        # DroneState 클래스에서 w_d를 numpy (4,1) 형태로 저장해야 함 #여기 순서좀
         self.drone_model.update(
-            state=self.state,
-            w_m=self.state.w_d,
-            beta=self.state.beta,
             alpha=self.state.alpha
         )
+        
+        # 2) Kalman Filter 추청 및 현재 상태에 반영 이거 루프 마지막으로 보내야 F_ab,Tau_ab 계산 됨
         self.kf.m_t    = self.drone_model.m_t
         self.kf.F_ab   = self.drone_model.F_ab
         self.kf.Tau_ab = self.drone_model.Tau_ab
         self.kf.I_tot  = self.drone_model.I_tot
-        self.kf.w_m    = self.drone_model.w_m
-        
-        # 2) Kalman Filter 추청 및 현재 상태에 반영
+        self.kf.w_m    = self.state.w_m
         # 예측, 갱신
         self.kf.predict()
         self.kf.update(self.imu_data, self.gps_data, self.mag_data)
