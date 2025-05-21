@@ -6,7 +6,7 @@ def skew(v):
                      [ v[2],     0, -v[0]],
                      [-v[1],  v[0],     0]])
 class KalmanFilter:
-    def __init__(self, dt: float = 0.01):
+    def __init__(self, drone_model, state, dt: float = 0.01):
         self.dt = dt
         # EKF 상태 벡터, 공분산, 노이즈
         self.x_est = np.zeros((18,1))
@@ -31,11 +31,15 @@ class KalmanFilter:
         # self.Tau_ab = None   # 3×4 토크 매핑 행렬
         # self.I_tot = None    # 3×3 관성 모멘트 행렬
         # self.w_m = None      # 입력 모터 속도 벡터 (4×1)
-    def euler_acc(self, imu_msg, u: np.ndarray = None, ):  ## create roll,pitch reading from accelerometer
+        self.drone_model = drone_model
+        self.state = state
+
+
+    def euler_acc(self, imu_msg, u: np.ndarray = None):  ## create roll,pitch reading from accelerometer
         acc = np.array([[imu_msg.linear_acceleration.x],
                         [imu_msg.linear_acceleration.y],
                         [imu_msg.linear_acceleration.z]])
-        acc_by_grav = acc - 1/self.m
+        acc_by_grav = acc - (1/self.m)*self.drone_model.Fab * self.state.w_d
         phi_acc = np.arctan2(acc_by_grav[1], acc_by_grav[2])
         theta_acc = np.arctan2(
             -acc_by_grav[0],
@@ -69,7 +73,7 @@ class KalmanFilter:
                         [gps_msg.longitude],
                         [gps_msg.altitude]])
         mag = np.array([[mag_msg.magnetic_field.x]])    ## 확인필요 z yaw 를 측정해야함
-        euler_acc = self.euler_acc(u, imu_msg)
+        euler_acc = self.euler_acc(imu_msg, u)
         z_k = np.vstack((gps, euler_acc, mag, gyro, acc))
         H = np.block({
             [np.eye(3), np.zeros((3,15))],
