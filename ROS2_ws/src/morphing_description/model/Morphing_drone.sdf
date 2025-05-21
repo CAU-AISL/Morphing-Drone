@@ -591,6 +591,7 @@
             <bodyName>imu_link</bodyName>
             <topicName>imu</topicName>
             <updateRate>100.0</updateRate>
+            <use_ned>true</use_ned>
             <gaussianNoise>0.0</gaussianNoise>
             <xyzOffset>0 0 0</xyzOffset>
             <rpyOffset>0 0 0</rpyOffset>
@@ -599,7 +600,39 @@
           </plugin>
         </sensor>
       </link>
+      <link name="gps_link">
+        <pose>0 0 0.002 0 0 0</pose>
+        <sensor name="gps_sensor" type="gps">
+          <always_on>true</always_on>
+          <update_rate>5</update_rate>
 
+          <!-- legacy 위치 잡음 스펙 -->
+          <gps>
+            <horizontal_noise>0.5</horizontal_noise>
+            <vertical_noise>0.8</vertical_noise>
+          </gps>
+
+          <!-- ROS 2용 GPS 플러그인 -->
+          <plugin name="gazebo_ros_gps_sensor" filename="libgazebo_ros_gps_sensor.so">
+            <ros>
+              <!-- 네임스페이스 없이 순수 이름만 -->
+              <namespace>gps</namespace>
+            </ros>
+            <!-- body_link→gps_link 고정 프레임 -->
+            <frameName>gps_link</frameName>
+            <!-- 이 두 토픽이 생성됩니다 -->
+            <topicName>fix</topicName>
+            <velocityTopicName>vel</velocityTopicName>
+            <use_ned>true</use_ned>
+            <updateRate>5.0</updateRate>
+          </plugin>
+        </sensor>
+      </link>
+      <joint name="B2GPS" type="fixed">
+        <parent>body_link</parent>
+        <child>gps_link</child>
+        <pose>0 0 0 0 0 0</pose>
+      </joint>
       <joint name="B2IMU" type="fixed">
         <parent>body_link</parent>
         <child>imu_link</child>
