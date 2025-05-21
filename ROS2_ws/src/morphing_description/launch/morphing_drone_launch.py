@@ -14,7 +14,7 @@ def generate_launch_description():
         # 1) Gazebo 실행 (ROS API 플러그인 없이도, 
         #    플러그인이 자체적으로 rclcpp spin() 을 띄우므로 OK)
         ExecuteProcess(
-            cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_factory.so', sdf],
+            cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_factory.so','-s', 'libgazebo_ros_init.so', sdf],
             output='screen'
         ),
 
@@ -29,4 +29,12 @@ def generate_launch_description():
                 # {'motor_rate_hz': 10.0},
             ]
         ),
+        
+        # 3) main_controller 노드
+        Node(
+            package='morphing_drone_control',
+            executable='main_controller',
+            name='morphing_drone_controller',
+            output='screen',
+        )
     ])
