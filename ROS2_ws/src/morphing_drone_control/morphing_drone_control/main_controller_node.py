@@ -153,7 +153,7 @@ class MorphingDroneController(Node):
         mag.header = msg.header
         mag.magnetic_field.x = 0.0
         mag.magnetic_field.y = 0.0
-        mag.magnetic_field.z = float(yaw)
+        mag.magnetic_field.z = -float(yaw)
         self.mag_data = mag
 
     def gps_callback(self, msg: NavSatFix):
@@ -203,7 +203,6 @@ class MorphingDroneController(Node):
         else:
             self.get_logger().warn("joint_data is not yet received.")
 
-        
 
         # 예측, 갱신
         self.kf.predict(self.state.v)
@@ -250,7 +249,6 @@ class MorphingDroneController(Node):
         self.log_file.flush()
         
         
-
         
 
 def main(args=None):

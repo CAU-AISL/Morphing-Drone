@@ -47,8 +47,8 @@ class KalmanFilter:
 
     def euler_acc(self, imu_msg, u: np.ndarray = None):  ## create roll,pitch reading from accelerometer
         acc = np.array([[imu_msg.linear_acceleration.x],
-                        [imu_msg.linear_acceleration.y],
-                        [imu_msg.linear_acceleration.z]])
+                        [-imu_msg.linear_acceleration.y],
+                        [-imu_msg.linear_acceleration.z]])
         acc_by_grav = acc - (1/self.drone_model.m_t)*self.drone_model.F_ab @ self.state.w_d
         phi_acc = np.arctan2(acc_by_grav[1], acc_by_grav[2])
         theta_acc = np.arctan2(
@@ -73,16 +73,21 @@ class KalmanFilter:
         self.x_est = A.dot(self.x_est) + B.dot(v) ## + np.concatenate((np.zeros((5,1)), [[self.g*self.dt]], np.zeros((6,1)))) 여기도 필요 없어짐
         self.P     = A.dot(self.P).dot(A.T) + self.Q
     def update(self, imu_msg, gps_msg, mag_msg, u: np.ndarray = None):
-        acc = np.array([[imu_msg.linear_acceleration.x],
+        phi = self.state.phi_hat
+        theta = self.state.theta_hat
+        psi = self.state.psi_hat
+        R = rpy2rot(phi,theta,psi)
+        R_T = R.T
+        acc = R_T @ np.array([[imu_msg.linear_acceleration.x],
                         [imu_msg.linear_acceleration.y],
-                        [imu_msg.linear_acceleration.z]])
-        gyro = np.array([[imu_msg.angular_velocity.x],
+                        [imu_msg.linear_acceleration.z-9.81]])
+        gyro = np.array([[-imu_msg.angular_velocity.x],
                          [imu_msg.angular_velocity.y],
-                         [imu_msg.angular_velocity.z]])
-        gps = np.array([[gps_msg.latitude],
+                         [-imu_msg.angular_velocity.z]])
+        gps = np.array([[-gps_msg.latitude],
                         [gps_msg.longitude],
-                        [gps_msg.altitude]])
-        mag = np.array([[mag_msg.magnetic_field.x]])    ## 확인필요 z yaw 를 측정해야함
+                        [-gps_msg.altitude]])
+        mag = np.array([[-mag_msg.magnetic_field.x]])    ## 확인필요 z yaw 를 측정해야함
         euler_acc = self.euler_acc(imu_msg, u)
         z_k = np.vstack((gps, euler_acc, mag, gyro, acc))
         H = np.block([
