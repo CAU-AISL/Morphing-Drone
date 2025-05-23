@@ -68,10 +68,18 @@ class DroneModel:
         bl = self.bl
         al = self.al
             
-        cmArm1 = np.array([[acml*np.cos(alpha[0][0])+bl],[acml*np.sin(alpha[0][0])],[0.0]])
-        cmArm2 = np.array([[-acml*np.sin(alpha[1][0])],[acml*np.cos(alpha[1][0])+bl],[0.0]])
-        cmArm3 = np.array([[-acml*np.cos(alpha[2][0])-bl],[-acml*np.sin(alpha[2][0])],[0.0]])
-        cmArm4 = np.array([[acml*np.sin(alpha[3][0])],[-acml*np.cos(alpha[3][0])-bl],[0.0]])
+        cmArm1 = np.array([[acml*np.cos(alpha[0][0])+bl],
+                           [acml*np.sin(alpha[0][0])],
+                           [0.0]])
+        cmArm2 = np.array([[-acml*np.sin(alpha[1][0])],
+                           [acml*np.cos(alpha[1][0])+bl],
+                           [0.0]])
+        cmArm3 = np.array([[-acml*np.cos(alpha[2][0])-bl],
+                           [-acml*np.sin(alpha[2][0])],
+                           [0.0]])
+        cmArm4 = np.array([[acml*np.sin(alpha[3][0])],
+                           [-acml*np.cos(alpha[3][0])-bl],
+                           [0.0]])
         cmTot = self.p2x @ ((m_a * cmArm1 + m_a * cmArm2 + m_a * cmArm3 + m_a * cmArm4) / m_t)
         alpha = self.state.alpha #alpha값 갖고옴
         

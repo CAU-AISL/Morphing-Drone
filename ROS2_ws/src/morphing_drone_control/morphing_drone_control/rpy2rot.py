@@ -1,6 +1,9 @@
 import numpy as np
 
 def rpy2rot(phi,theta,psi):
+    phi = float(phi)
+    theta = float(theta)
+    psi = float(psi)
     R3 = np.array([[ np.cos(psi),  np.sin(psi), 0],
                    [-np.sin(psi),  np.cos(psi), 0],
                    [           0,             0, 1]], dtype=float)
