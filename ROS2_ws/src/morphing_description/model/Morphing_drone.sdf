@@ -70,7 +70,7 @@
 
     <model name="Morphing_drone" canonical_link="body_link">
       <self_collide>true</self_collide>
-      <pose>0 0 0.18 0 0 0</pose>
+      <pose>0 0 0.18 0 0 3.141592653</pose>
       <link name="body_link">
         <collision name="body_collision">
           <pose relative_to="body_link">0 0 0.033 1.570796327 0 0</pose>
@@ -647,7 +647,7 @@
           <limit>
             <lower>-0.7853981634</lower>
             <upper>0.7853981634</upper>
-            <effort>0.00000</effort>
+            <effort>4.9</effort>
             <velocity>0.00000</velocity>
           </limit>
           <xyz>0.00000 0.00000 1.00000</xyz>
@@ -661,7 +661,7 @@
           <limit>
             <lower>-0.7853981634</lower>
             <upper>0.7853981634</upper>
-            <effort>0.00000</effort>
+            <effort>4.9</effort>
             <velocity>0.00000</velocity>
           </limit>
           <xyz>0.00000 0.00000 1.00000</xyz>
@@ -675,7 +675,7 @@
           <limit>
             <lower>-0.7853981634</lower>
             <upper>0.7853981634</upper>
-            <effort>0.00000</effort>
+            <effort>4.9</effort>
             <velocity>0.00000</velocity>
           </limit>
           <xyz>0.00000 0.00000 1.00000</xyz>
@@ -689,7 +689,7 @@
           <limit>
             <lower>-0.7853981634</lower>
             <upper>0.7853981634</upper>
-            <effort>0.00000</effort>
+            <effort>4.9</effort>
             <velocity>0.00000</velocity>
           </limit>
           <xyz>0.00000 0.00000 1.00000</xyz>
@@ -703,7 +703,7 @@
           <limit>
             <lower>-1.570796327</lower>
             <upper>1.570796327</upper>
-            <effort>0.00000</effort>
+            <effort>0.98</effort>
             <velocity>0.00000</velocity>
           </limit>
           <xyz>1 0 0</xyz>
@@ -717,7 +717,7 @@
           <limit>
             <lower>-1.570796327</lower>
             <upper>1.570796327</upper>
-            <effort>0.00000</effort>
+            <effort>0.98</effort>
             <velocity>0.00000</velocity>
           </limit>
           <xyz>1 0 0</xyz>
@@ -731,7 +731,7 @@
           <limit>
             <lower>-1.570796327</lower>
             <upper>1.570796327</upper>
-            <effort>0.00000</effort>
+            <effort>0.98</effort>
             <velocity>0.00000</velocity>
           </limit>
           <xyz>1 0 0</xyz>
@@ -745,7 +745,7 @@
           <limit>
             <lower>-1.570796327</lower>
             <upper>1.570796327</upper>
-            <effort>0.00000</effort>
+            <effort>0.98</effort>
             <velocity>0.00000</velocity>
           </limit>
           <xyz>1 0 0</xyz>

@@ -64,12 +64,21 @@ class DroneModel:
             bl = self.bl
             al = self.al
             
-            cmArm1 = [acml*np.cos(alpha[0])+bl, acml*np.sin(alpha[0]), 0].T
-            cmArm2 = [-acml*np.sin(alpha[1]), acml*np.cos(alpha[1])+bl,  0].T
-            cmArm3 = [-acml*np.cos(alpha[2])-bl, -acml*np.sin(alpha[2]), 0].T
-            cmArm4 = [acml*np.sin(alpha[3]),-acml*np.cos(alpha[3])-bl, 0].T
-            cmTot =  p2x *((m_a * cmArm1 + m_a * cmArm2 + m_a * cmArm3 + m_a * cmArm4)/(m_t))
-            alpha = self.state.alpha #alpha값 갖고옴
+        cmArm1 = np.array([[acml*np.cos(alpha[0][0])+bl],
+                           [acml*np.sin(alpha[0][0])],
+                           [0.0]])
+        cmArm2 = np.array([[-acml*np.sin(alpha[1][0])],
+                           [acml*np.cos(alpha[1][0])+bl],
+                           [0.0]])
+        cmArm3 = np.array([[-acml*np.cos(alpha[2][0])-bl],
+                           [-acml*np.sin(alpha[2][0])],
+                           [0.0]])
+        cmArm4 = np.array([[acml*np.sin(alpha[3][0])],
+                           [-acml*np.cos(alpha[3][0])-bl],
+                           [0.0]])
+        cmTot = self.p2x @ ((m_a * cmArm1 + m_a * cmArm2 + m_a * cmArm3 + m_a * cmArm4) / m_t)
+        alpha = self.state.alpha #alpha값 갖고옴
+        
         if self.cur_I_total is None:
             self.cur_I_total = p2x@(rpy2rot(np.array([[0,0,alpha[0]]]))@self.I_arm1@rpy2rot(np.array([[0,0,alpha[0]]])).T
             

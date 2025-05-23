@@ -119,7 +119,7 @@ class MorphingDroneController(Node):
         mag.header = msg.header
         mag.magnetic_field.x = 0.0
         mag.magnetic_field.y = 0.0
-        mag.magnetic_field.z = float(yaw)
+        mag.magnetic_field.z = -float(yaw)
         self.mag_data = mag
 
     def gps_callback(self, msg: NavSatFix):
@@ -144,45 +144,7 @@ class MorphingDroneController(Node):
         self.kf.I_tot  = self.drone_model.I_tot
         self.kf.w_m    = self.state.w_d
         
-        # 2) Kalman Filter 추청 및 현재 상태에 반영
-        # 예측, 갱신
-        self.kf.predict(self.state.v)
-        self.kf.update(self.
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       
-                       , self.gps_data, self.mag_data, self.state.w_d)
-        # state에 반영
-        est = self.kf.x_est  # 18×1 추정 상태 벡터
         
-        self.state.x_hat = est[0]
-        self.state.y_hat = est[1]
-        self.state.z_hat = est[2]
-        self.state.x_dot_hat = est[3]
-        self.state.y_dot_hat = est[4]
-        self.state.z_dot_hat = est[5]
-        self.state.x_ddot_hat = est[6]
-        self.state.y_ddot_hat = est[7]
-        self.state.z_ddot_hat = est[8]
-        self.state.phi_hat = est[9]
-        self.state.theta_hat = est[10]
-        self.state.psi_hat = est[11]
-        self.state.phi_dot_hat = est[12]
-        self.state.theta_dot_hat = est[13]
-        self.state.psi_dot_hat = est[14]
-        self.state.phi_ddot_hat = est[15]
-        self.state.theta_ddot_hat = est[16]
-        self.state.psi_ddot_hat = est[17]
         
         # TODO: 3) Navigation - Fault Detection
         # TODO: 4) Navigation - Mode Classification 
@@ -195,6 +157,33 @@ class MorphingDroneController(Node):
 
         # 7) 모터 명령어 생성 및 PWM 신호 전송
         self.motor_controller.send_commands()
+        
+        # 2) Kalman Filter 추청 및 현재 상태에 반영
+
+        # 예측, 갱신
+        self.kf.predict(self.state.v)
+        self.kf.update(self.imu_data, self.gps_data, self.mag_data, self.state.w_d)
+        # state에 반영
+        est = self.kf.x_est  # 18×1 추정 상태 벡터
+        
+        self.state.x_hat = est[0][0]
+        self.state.y_hat = est[1][0]
+        self.state.z_hat = est[2][0]
+        self.state.x_dot_hat = est[3][0]
+        self.state.y_dot_hat = est[4][0]
+        self.state.z_dot_hat = est[5][0]
+        self.state.x_ddot_hat = est[6][0]
+        self.state.y_ddot_hat = est[7][0]
+        self.state.z_ddot_hat = est[8][0]
+        self.state.phi_hat = est[9][0]
+        self.state.theta_hat = est[10][0]
+        self.state.psi_hat = est[11][0]
+        self.state.phi_dot_hat = est[12][0]
+        self.state.theta_dot_hat = est[13][0]
+        self.state.psi_dot_hat = est[14][0]
+        self.state.phi_ddot_hat = est[15][0]
+        self.state.theta_ddot_hat = est[16][0]
+        self.state.psi_ddot_hat = est[17][0]
         
         
 
