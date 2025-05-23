@@ -136,7 +136,7 @@ class MorphingDroneController(Node):
             'x_dot', 'y_dot', 'z_dot',
             'phi_dot', 'theta_dot', 'psi_dot',
             'w1', 'w2', 'w3', 'w4',
-            'ori_x', 'ori_y', 'ori_z', 'ori_w',
+            'ori_x', 'ori_y', 'ori_z',
             'gyro_x', 'gyro_y', 'gyro_z',
             'acc_x', 'acc_y', 'acc_z'
             ])
