@@ -3,11 +3,11 @@ from .rpy2rot import rpy2rot
 from .rpy2rot_derivative import RPY2Rot_derivative
 
 class ModeController:
-    def __init__(self, state, guidance, drone_model,failnum):
+    def __init__(self, state, guidance, drone_model,fault_detection):
         self.state = state
         self.guidance = guidance
         self.drone_model = drone_model
-        self.failnum = failnum
+        self.fault_detection = fault_detection
 
     def update_abw(self):
     # 변수정의
@@ -23,10 +23,6 @@ class ModeController:
         x_ddot = self.state.x_ddot_hat
         y_ddot = self.state.y_ddot_hat
         z_ddot = self.state.z_ddot_hat
-        
-        x_dddot = self.state.x_dddot_hat
-        y_dddot = self.state.y_dddot_hat
-        z_dddot = self.state.z_dddot_hat
         
         phi = self.state.phi_hat
         theta = self.state.theta_hat
@@ -49,6 +45,7 @@ class ModeController:
         # beta[[1,3]]=beta[[3,1]]
         
         #여기는 아직 없음 따로 추가해줘야 함
+        self.drone_model.update(alpha)
         I_prev = self.drone_model.prev_I_total
         I_cur = self.drone_model.cur_I_total
         dt = self.drone_model.current_time-self.drone_model.prev_time
@@ -71,19 +68,14 @@ class ModeController:
         theta_d = self.guidance.theta_d
         psi_d = self.guidance.psi_d
         
-    # 팔 각도 관련
-        alpha = self.state.alpha
-        beta = self.state.beta
-        
-        
         if self.state.mode == 'X':
             
             #Z-domain에서 v 값 계산
             z_current = np.array([
-                x,x_dot,x_ddot,y,y_dot,y_ddot,z_dot,z_ddot,phi,phi_dot,phi_ddot,theta,theta_dot,theta_ddot,psi, psi_dot, psi_ddot
+                [x,x_dot,x_ddot,y,y_dot,y_ddot,z,z_dot,z_ddot,phi,phi_dot,phi_ddot,theta,theta_dot,theta_ddot,psi, psi_dot, psi_ddot]
             ]).T
             z_ref = np.array([
-                x_d,0,0,y_d,0,0,z_d,0,0,phi_d,0,0,theta_d,0,0,psi_d,0,0
+                [x_d,0,0,y_d,0,0,z_d,0,0,phi_d,0,0,theta_d,0,0,psi_d,0,0]
             ]).T
             error = z_ref-z_current
                     #이런식으로 K_lqr 계산, 미리 offline 계산
@@ -187,6 +179,7 @@ class ModeController:
      -6.44556148e-15, -1.02397733e-14, -8.72810987e-15,  3.16227766e+00,  4.60539882e+00,  3.19543387e+00]
 ])
 
+
                
                
             
@@ -203,24 +196,23 @@ class ModeController:
                 [np.sin(np.pi/4), np.cos(np.pi/4),0],
                 [0,0,1]
             ])
-            F_a_b = p2x@np.array([
-                [0, kf*np.sin(beta[0]), -kf*np.cos(beta[0])],
-                [-kf*np.cos(alpha[1])*np.sin(beta[1]), -kf*np.sin(alpha[1])*np.sin(beta[1]), -kf*np.cos(beta[1])],
-                [0, -kf*np.sin(beta[2]), -kf*np.cos(beta[2])],
-                [kf*np.cos(alpha[3])*np.sin(beta[3]), kf*np.sin(alpha[3])*np.sin(beta[3]), -kf*np.cos(beta[3])]
-            ]).T
+            F_a_b = p2x@(np.array([
+                [0, kf*np.sin(beta[0][0]), -kf*np.cos(beta[0][0])],
+                [-kf*np.cos(alpha[1][0])*np.sin(beta[1][0]), -kf*np.sin(alpha[1][0])*np.sin(beta[1][0]), -kf*np.cos(beta[1][0])],
+                [0, -kf*np.sin(beta[2][0]), -kf*np.cos(beta[2][0])],
+                [kf*np.cos(alpha[3][0])*np.sin(beta[3][0]), kf*np.sin(alpha[3][0])*np.sin(beta[3][0]), -kf*np.cos(beta[3][0])]
+            ]).T)
             
             #Tau_a_b 값 계산 #bl에 1/sqrt(2) 안곱하는 이유 궁금
-            Tau_a_b = p2x@np.array([
-                [0, kf * (bl+al) * np.cos(beta[0]) + km*np.sin(beta[0]), kf * (bl+al) * np.sin(beta[0]) - km * np.cos(beta[0])],
-                [-kf* (bl+al*np.cos(alpha[1]))*np.cos(beta[1]) + km*np.cos(alpha[1])*np.sin(beta[1]), -kf*al*np.sin(alpha[1])*np.cos(beta[1])+km*np.sin(alpha[1])*np.sin(beta[1]),kf*al*(np.sin(alpha[1]))**2*np.sin(beta[1])+kf*(bl+al*np.cos(alpha[1]))*np.cos(alpha[1])*np.sin(beta[1])+ km*np.cos(beta[1]) ],
-                [0,  -kf*(bl+al)*np.cos(beta[2]) - km*np.sin(beta[2]),kf*(bl+al)*np.sin(beta[2])-km*np.cos(beta[2])],
-                [kf*(bl+al*np.cos(alpha[3]))*np.cos(beta[3])-km*np.cos(alpha[3])*np.sin(beta[3]), kf*al*np.sin(alpha[3])*np.cos(beta[3])-km*np.sin(alpha[3])*np.sin(beta[3]),kf*al*(np.sin(alpha[3]))**2*np.sin(beta[3])+kf*(bl+al*np.cos(alpha[3]))*np.cos(alpha[3])*np.sin(beta[3])+km*np.cos(beta[3])]
-            ]).T
+            Tau_a_b = p2x@(np.array([
+                [0, kf * (bl+al) * np.cos(beta[0][0]) + km*np.sin(beta[0][0]), kf * (bl+al) * np.sin(beta[0][0]) - km * np.cos(beta[0][0])],
+                [-kf* (bl+al*np.cos(alpha[1][0]))*np.cos(beta[1][0]) + km*np.cos(alpha[1][0])*np.sin(beta[1][0]), -kf*al*np.sin(alpha[1][0])*np.cos(beta[1][0])+km*np.sin(alpha[1][0])*np.sin(beta[1][0]),kf*al*(np.sin(alpha[1][0]))**2*np.sin(beta[1][0])+kf*(bl+al*np.cos(alpha[1][0]))*np.cos(alpha[1][0])*np.sin(beta[1][0])+ km*np.cos(beta[1][0])],
+                [0,  -kf*(bl+al)*np.cos(beta[2][0]) - km*np.sin(beta[2][0]),kf*(bl+al)*np.sin(beta[2][0])-km*np.cos(beta[2][0])],
+                [kf*(bl+al*np.cos(alpha[3][0]))*np.cos(beta[3][0])-km*np.cos(alpha[3][0])*np.sin(beta[3][0]), kf*al*np.sin(alpha[3][0])*np.cos(beta[3][0])-km*np.sin(alpha[3][0])*np.sin(beta[3][0]),kf*al*(np.sin(alpha[3][0]))**2*np.sin(beta[3][0])+kf*(bl+al*np.cos(alpha[3][0]))*np.cos(alpha[3][0])*np.sin(beta[3][0])+km*np.cos(beta[3][0])]
+            ]).T)
             
             #JR matrix 
-            R = rpy2rot(np.array([
-                phi,theta,psi]))         # 3×3 회전 행렬
+            R = rpy2rot(phi,theta,psi)         # 3×3 회전 행렬
             R_T = R.T                      # RPY2Rot(obj.euler)'에 해당
 
             top_left = (1 / m_t) * R_T
@@ -235,10 +227,10 @@ class ModeController:
             
             #JR_dot matrix 
             R = RPY2Rot_derivative(phi,theta,psi,phi_dot,theta_dot,psi_dot)
-            R_T = R.T
-            top_left = (1/m_t)*R_T
+            top_left = (1/m_t)*R
             top_right = np.zeros((3,3))
             bottom_left = np.zeros((3,3))
+            #inv인지 zeros인지 확인
             bottom_right = np.zeros((3,3))
             
             JRdot = np.block([
@@ -247,19 +239,19 @@ class ModeController:
             ])
             
             #J_beta, J_betadot 계산후 B matrix 
-            J_beta = np.vstack((F_a_b,Tau_a_b))
+            J_beta = np.vstack((F_a_b,Tau_a_b)) # 6*4 matrix
             
             top = p2x@np.array([
-                [0,  -kf*np.cos(alpha[1])*np.cos(beta[1])*w_m[1], 0, kf*np.cos(alpha[3])*np.cos(beta[3])*w_m[3]],
-                [kf*np.cos(beta[0])*w_m[0],  -kf*np.sin(alpha[1])*np.cos(beta[1])*w_m[1], -kf*np.cos(beta[2])*w_m[2], kf*np.sin(alpha[3])*np.cos(beta[3])*w_m[3]],
-                [kf*np.sin(beta[0])*w_m[0],kf*np.sin(beta[1])*w_m[1], kf*np.sin(beta[2])*w_m[2],kf*np.sin(beta[3])*w_m[3]]
+                [0,  -kf*np.cos(alpha[1][0])*np.cos(beta[1][0])*w_m[1][0], 0, kf*np.cos(alpha[3][0])*np.cos(beta[3][0])*w_m[3][0]],
+                [kf*np.cos(beta[0][0])*w_m[0][0],  -kf*np.sin(alpha[1][0])*np.cos(beta[1][0])*w_m[1][0], -kf*np.cos(beta[2][0])*w_m[2][0], kf*np.sin(alpha[3][0])*np.cos(beta[3][0])*w_m[3][0]],
+                [kf*np.sin(beta[0][0])*w_m[0][0],kf*np.sin(beta[1][0])*w_m[1][0], kf*np.sin(beta[2][0])*w_m[2][0],kf*np.sin(beta[3][0])*w_m[3][0]]
             ])
             bottom = p2x@np.array([
-                [0,kf*(bl+al*np.cos(alpha[1]))*np.sin(beta[1])*w_m[1] + km*np.cos(alpha[1])*np.cos(beta[1])*w_m[1],0,-kf*(bl+al*np.cos(alpha[3]))*np.sin(beta[3])*w_m[3] - km*np.cos(alpha[3])*np.cos(beta[3])*w_m[3]],
-                [(-kf*(bl+al)*np.sin(beta[0]) + km*np.cos(beta[0]))*w_m[0], (kf*al*np.sin(alpha[1])*np.sin(beta[1])*w_m[1] + km*np.sin(alpha[1])*np.cos(beta[1]))*w_m[1],(kf*(bl+al)*np.sin(beta[2]) - km*np.cos(beta[2]))*w_m[2], -(kf*al*np.sin(alpha[3])*np.sin(beta[3]) + km*np.sin(alpha[3])*np.cos(beta[3]))*w_m[3]],
-                [(kf*(bl+al)*np.cos(beta[0]) + km*np.sin(beta[0]))*w_m[0], (kf*al*(np.sin(alpha[1]))**2*np.cos(beta[1]) + kf*(bl+al*np.cos(alpha[1]))*np.cos(alpha[1])*np.cos(beta[1]) - km*np.sin(beta[1]))*w_m[1], (kf*(bl+al)*np.cos(beta[2]) + km*np.sin(beta[2]))*w_m[2], (kf*al*(np.sin(alpha[3]))**2*np.cos(beta[3]) + kf*(bl+al*np.cos(alpha[3]))*np.cos(alpha[3])*np.cos(beta[3]) - km*np.sin(beta[3]))*w_m[3]]
+                [0,kf*(bl+al*np.cos(alpha[1][0]))*np.sin(beta[1][0])*w_m[1][0] + km*np.cos(alpha[1][0])*np.cos(beta[1][0])*w_m[1][0],0,-kf*(bl+al*np.cos(alpha[3][0]))*np.sin(beta[3][0])*w_m[3][0] - km*np.cos(alpha[3][0])*np.cos(beta[3][0])*w_m[3][0]],
+                [(-kf*(bl+al)*np.sin(beta[0][0]) + km*np.cos(beta[0][0]))*w_m[0][0], (kf*al*np.sin(alpha[1][0])*np.sin(beta[1][0])*w_m[1][0] + km*np.sin(alpha[1][0])*np.cos(beta[1][0]))*w_m[1][0],(kf*(bl+al)*np.sin(beta[2][0]) - km*np.cos(beta[2][0]))*w_m[2][0], -(kf*al*np.sin(alpha[3][0])*np.sin(beta[3][0]) + km*np.sin(alpha[3][0])*np.cos(beta[3][0]))*w_m[3][0]],
+                [(kf*(bl+al)*np.cos(beta[0][0]) + km*np.sin(beta[0][0]))*w_m[0][0], (kf*al*(np.sin(alpha[1][0]))**2*np.cos(beta[1][0]) + kf*(bl+al*np.cos(alpha[1][0]))*np.cos(alpha[1][0])*np.cos(beta[1][0]) - km*np.sin(beta[1][0]))*w_m[1][0], (kf*(bl+al)*np.cos(beta[2][0]) + km*np.sin(beta[2][0]))*w_m[2][0], (kf*al*(np.sin(alpha[3][0]))**2*np.cos(beta[3][0]) + kf*(bl+al*np.cos(alpha[3][0]))*np.cos(alpha[3][0])*np.cos(beta[3][0]) - km*np.sin(beta[3][0]))*w_m[3][0]]
             ])
-            J_betadot = np.vstack((top,bottom))
+            J_betadot = np.vstack((top,bottom)) #6*4 matrix
             
             left = JR@J_beta
             right = JR@J_betadot
@@ -283,8 +275,10 @@ class ModeController:
                 [0,0,0,0]
             ]).T # 팔 각도 고정
             self.state.beta_dot = u_control[4:]
+
             # self.state.beta_dot[[0,2]] = self.state.beta_dot[[2,0]]
             # self.state.beta_dot[[1,3]] = self.state.beta_dot[[3,1]]
+
             
             #F_ab,Tau_ab 업데이트
             self.drone_model.F_ab = F_a_b
@@ -292,14 +286,15 @@ class ModeController:
             # self.drone_model.F_ab[:,[1,3]]=self.drone_model.F_ab[:,[3,1]]
             self.drone_model.Tau_ab = Tau_a_b
             
+
             # self.drone_model.Tau_ab[:,[0,2]]=self.drone_model.Tau_ab[:,[2,0]]
             # self.drone_model.Tau_ab[:,[1,3]]=self.drone_model.Tau_ab[:,[3,1]]
             self.state.beta = self.state.beta+self.state.beta_dot * dt
-        
+ 
         elif self.state.mode == 'Y':
             #Z-domain에서 v 값 계산
             z_current = np.array([
-                x,x_dot,x_ddot,y,y_dot,y_ddot,z_dot,z_ddot,phi,phi_dot,phi_ddot,theta,theta_dot,theta_ddot,psi, psi_dot, psi_ddot
+                x,x_dot,x_ddot,y,y_dot,y_ddot,z,z_dot,z_ddot,phi,phi_dot,phi_ddot,theta,theta_dot,theta_ddot,psi, psi_dot, psi_ddot
             ]).T
             z_ref = np.array([
                 x_d,0,0,y_d,0,0,z_d,0,0,phi_d,0,0,theta_d,0,0,psi_d,0,0
@@ -421,7 +416,7 @@ class ModeController:
             v_lqr = K_lqr@error
             self.state.v = v_lqr
             #Y configuration alpha_dot 논리, alpha 명령 줌 alpha_dot 아님
-            failnum = self.failnum
+            failnum = self.fault_detection.failnum
             if 0 < failnum:
                 i=failnum
                 self.state.alpha = np.array([
@@ -469,8 +464,7 @@ class ModeController:
                         ])
             
             #JR matrix 6*6
-            R = rpy2rot(np.array([
-                phi,theta,psi]))         # 3×3 회전 행렬
+            R = rpy2rot(phi,theta,psi)         # 3×3 회전 행렬
             R_T = R.T                      # RPY2Rot(obj.euler)'에 해당
 
             top_left = (1 / m_t) * R_T
@@ -490,6 +484,7 @@ class ModeController:
             top_right = np.zeros((3,3))
             bottom_left = np.zeros((3,3))
             bottom_right = np.zeros((3,3))
+            
             
             JRdot = np.block([
                 [top_left, top_right],

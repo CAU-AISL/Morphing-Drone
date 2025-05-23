@@ -9,4 +9,3 @@ class GuidanceManager:
         self.phi_d = 0
         self.theta_d = 0
         self.psi_d = 0
-         

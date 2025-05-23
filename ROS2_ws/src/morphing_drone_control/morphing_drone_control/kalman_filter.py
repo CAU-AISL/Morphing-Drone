@@ -13,18 +13,28 @@ class KalmanFilter:
         self.P     = np.eye(18)*1e-4
         self.Q     = np.eye(18)*1e-8
         # 측정 노이즈
-        sigma_acc  = 0.1
+        sigma_acc  = 0.001
+        sigma_euler_acc =0.001
         sigma_gyro = 0.001
         sigma_gps  = 0.003
         sigma_mag  = 0.003
         R_gps  = sigma_gps**2 * np.eye(3)
+        R_euler_acc = sigma_euler_acc**2*np.eye(2)
         R_mag  = sigma_mag**2 * np.eye(1)
         R_gyro = sigma_gyro**2 * np.eye(3)
-        self.R_imu = np.block([
-            [R_gps,           np.zeros((3,1)), np.zeros((3,3))],
-            [np.zeros((1,3)), R_mag,           np.zeros((1,3))],
-            [np.zeros((3,3)), np.zeros((3,1)), R_gyro         ]
-        ])
+        R_acc = sigma_acc**2 *np.eye(3)
+        
+        
+        # 전체 공분산 행렬 초기화
+        R_imu = np.zeros((12, 12))
+
+        # 매핑 (슬라이싱 기반)
+        R_imu[0:3, 0:3] = R_gps
+        R_imu[3:5, 3:5] = R_euler_acc
+        R_imu[5, 5] = R_mag
+        R_imu[6:9, 6:9] = R_gyro
+        R_imu[9:12, 9:12] = R_acc
+        self.R_imu = R_imu
         # # 동역학 파라미터 (외부에서 설정 필요)  18-state estimation 에서는 feedback linearization 에 사용된 모델 이용
         # self.m_t = None      # 총 질량
         # self.F_ab = None     # 3×4 힘 매핑 행렬
@@ -80,17 +90,17 @@ class KalmanFilter:
         mag = np.array([[-mag_msg.magnetic_field.x]])    ## 확인필요 z yaw 를 측정해야함
         euler_acc = self.euler_acc(imu_msg, u)
         z_k = np.vstack((gps, euler_acc, mag, gyro, acc))
-        H = np.block({
+        H = np.block([
             [np.eye(3), np.zeros((3,15))],
             [np.zeros((3,3)), np.eye(3), np.zeros((3,12))],
             [np.zeros((3,9)), np.eye(3), np.zeros((3,6))],
             [np.zeros((3,12)), np.eye(3), np.zeros((3,3))]
-        })
-        S = H.dot(self.P).dot(H.T) + self.R_imu
+        ])
+        S = H@(self.P)@(H.T) + self.R_imu # 12*18 @ 18*18 @ 18*12 + 12*12
         K = self.P.dot(H.T).dot(np.linalg.inv(S))
         y = z_k - H.dot(self.x_est)
         self.x_est = self.x_est + K.dot(y)
-        self.P     = (np.eye(12)-K.dot(H)).dot(self.P)
+        self.P     = (np.eye(18)-K.dot(H)).dot(self.P)
         # print("x_est", self.x_est)
     # for 18 - state estimation we don't need jacobian calculation, just use the linear model from feedback linearization
     # def _compute_jacobian(self):

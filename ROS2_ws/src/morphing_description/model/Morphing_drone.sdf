@@ -638,7 +638,7 @@
         <child>imu_link</child>
         <pose>0 0 0 0 0 0</pose>
       </joint>
-      
+
       <joint name="flare1_link_joint" type="revolute">
         <parent>body_link</parent>
         <child>flare1_link</child>
@@ -784,7 +784,7 @@
         </axis>
       </joint>
 
-    
+
       <!-- main 모터 -->
       <plugin name="motor1" filename="libgazebo_motor_model_ros.so">
         <robotNamespace>my_drone</robotNamespace>
@@ -839,8 +839,7 @@
         <jointName>tilt4_joint</jointName>
       </plugin>
 
-      <plugin name="joint_state_publisher"
-              filename="libgazebo_ros_joint_state_publisher.so">
+      <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
         <robotNamespace>my_drone</robotNamespace>
         <!-- publish_rate 가 아니라 update_rate -->
         <update_rate>50</update_rate>
@@ -864,7 +863,7 @@
         <joint_name>tilt4_joint</joint_name>
       </plugin>
 
-      
+
 
     </model>
   </world>
