@@ -39,7 +39,11 @@ class ModeController:
         
         # 팔 각도 관련
         alpha = self.state.alpha
+        # alpha[[0,2]]=-1*alpha[[2,0]]
+        # alpha[[1,3]]=-1*alpha[[3,1]]
         beta = self.state.beta
+        # beta[[0,2]]=beta[[2,0]]
+        # beta[[1,3]]=beta[[3,1]]
         
         #여기는 아직 없음 따로 추가해줘야 함
         self.drone_model.update(alpha)
@@ -54,16 +58,10 @@ class ModeController:
         m_t = self.drone_model.m_t
         
         w_m = self.state.w_d**2
-<<<<<<< Updated upstream
-        
-    # Guidance 관련 (update 되면 해야 함)
-        x_d = self.guidance.x_d #maybe..?
-=======
         # w_m[[0,2]] = w_m[[2,0]]
         # w_m[[1,3]] = w_m[[3,1]]
         # Guidance 관련 (update 되면 해야 함)
         x_d = self.guidance.x_d 
->>>>>>> Stashed changes
         y_d = self.guidance.y_d
         z_d = self.guidance.z_d
         phi_d = self.guidance.phi_d
@@ -169,41 +167,6 @@ class ModeController:
             
             
             K_lqr = np.array([
-<<<<<<< Updated upstream
-                [1.00000000e+01,  9.51325204e+00,  4.47509822e+00, -2.09825237e-17,
-                -4.81629836e-16, -3.26249510e-16, -9.36288349e-16,  1.24528323e-15,
-                6.52280064e-16, -1.10683002e-17, -1.59522132e-17, -4.88391287e-18,
-                -2.19944578e-17, -8.87434893e-17, -9.70178991e-17,  7.32124969e-17,
-                1.90203171e-16,  1.81084519e-16],
-                [-6.16819195e-16, -1.41889108e-15, -3.26249510e-16,  1.00000000e+01,
-                9.51325204e+00,  4.47509822e+00,  1.36890538e-14,  2.17775278e-14,
-                5.36420138e-15,  4.89624223e-16,  6.93929591e-16,  2.70475164e-16,
-                -7.38479446e-17, -2.80061890e-16, -1.10057195e-15,  3.09555861e-17,
-                6.48768443e-16,  1.22667787e-16],
-                [5.14245690e-15,  3.00562395e-15,  6.52280064e-16,  4.20456157e-14,
-                4.18675683e-14,  5.36420138e-15,  1.00000000e+01,  9.51325204e+00,
-                4.47509822e+00,  2.60423763e-16,  3.58741050e-16,  2.20428578e-16,
-                -1.36981312e-16,  6.17842699e-16,  1.03637321e-16, -5.34558188e-16,
-                -1.17012414e-15, -1.17353127e-15],
-                [2.07516351e-17,  1.51057540e-18, -4.88391287e-18, -2.10094667e-15,
-                -1.54936117e-15,  2.70475164e-16, -6.89246928e-16, -4.01573516e-16,
-                2.20428578e-16,  1.00000000e+00,  2.41421356e+00,  2.41421356e+00,
-                -1.79189186e-15, -1.38984181e-15, -2.03910436e-15, -3.38369976e-15,
-                -2.03166292e-15, -2.18936409e-15],
-                [-1.39906336e-15, -5.96781518e-16, -9.70178991e-17, -5.22419576e-15,
-                -2.75685534e-15, -1.10057195e-15, -4.34521952e-15, -2.12592344e-15,
-                1.03637321e-16, -1.46911516e-16, -1.03718173e-15, -2.03910436e-15,
-                1.00000000e+00,  2.41421356e+00,  2.41421356e+00,  1.00526731e-15,
-                3.55415968e-15,  2.50385769e-15],
-                [1.34157716e-15,  7.98929591e-16,  1.81084519e-16,  4.81178165e-15,
-                3.18927220e-15,  1.22667787e-16, -5.94289565e-15, -2.71978671e-15,
-                -1.17353127e-15, -1.73643522e-15, -2.71023382e-15, -2.18936409e-15,
-                2.22947161e-15,  6.83307426e-15,  2.50385769e-15,  1.00000000e+00,
-                2.41421356e+00,  2.41421356e+00]
-            ])
-               
-               
-=======
                 [1.00000000e+00, 2.41421356e+00, 2.41421356e+00, 7.48257832e-17, 1.20450439e-15, 1.06905681e-15,
                 1.89896964e-15, 3.00731157e-15, 1.19644518e-15, 1.52914375e-15, 2.71624357e-15, 1.24514719e-15,
                 -4.00214900e-16, -3.18033428e-16, -2.74087709e-16, 6.71615503e-16, 6.16346517e-16, 1.66488590e-16],
@@ -223,8 +186,6 @@ class ModeController:
                 1.58930112e-16, -1.39056951e-15, -1.32887755e-15, 9.07825307e-16, 2.14410802e-15, 7.13367074e-16,
                 7.09366743e-16, 5.54598190e-16, -6.27501753e-18, 1.00000000e+00, 2.41421356e+00, 2.41421356e+00]
             ])
-            # K_lqr = np.array([      
->>>>>>> Stashed changes
             
             v_lqr = K_lqr@error
             self.state.v = v_lqr
@@ -314,22 +275,27 @@ class ModeController:
             self.state.w_d = np.sqrt(np.maximum(self.state.w_d, 0.0))
             self.state.w_d[0][0] *= -1
             self.state.w_d[2][0] *= -1
+            # self.state.w_d[[0,2]] = self.state.w_d[[2,0]]
+            # self.state.w_d[[1,3]] = self.state.w_d[[3,1]]
             
             self.state.alpha = np.array([
                 [0,0,0,0]
             ]).T # 팔 각도 고정
             self.state.beta_dot = u_control[4:]
-<<<<<<< Updated upstream
-=======
             # self.state.beta_dot[[0,2]] = self.state.beta_dot[[2,0]]
             # self.state.beta_dot[[1,3]] = self.state.beta_dot[[3,1]]
->>>>>>> Stashed changes
-            
+
             #F_ab,Tau_ab 업데이트
             self.drone_model.F_ab = F_a_b
+            # self.drone_model.F_ab[:,[0,2]]=self.drone_model.F_ab[:,[2,0]]
+            # self.drone_model.F_ab[:,[1,3]]=self.drone_model.F_ab[:,[3,1]]
             self.drone_model.Tau_ab = Tau_a_b
-            
-<<<<<<< Updated upstream
+
+            # self.drone_model.Tau_ab[:,[0,2]]=self.drone_model.Tau_ab[:,[2,0]]
+            # self.drone_model.Tau_ab[:,[1,3]]=self.drone_model.Tau_ab[:,[3,1]]
+            self.state.beta = self.state.beta+self.state.beta_dot * dt
+ 
+
         elif self.state.mode == 'Y':
             #Z-domain에서 v 값 계산
             z_current = np.array([
@@ -523,11 +489,10 @@ class ModeController:
             top_right = np.zeros((3,3))
             bottom_left = np.zeros((3,3))
             bottom_right = np.zeros((3,3))
-=======
-            
+
             # self.drone_model.Tau_ab[:,[0,2]]=self.drone_model.Tau_ab[:,[2,0]]
             # self.drone_model.Tau_ab[:,[1,3]]=self.drone_model.Tau_ab[:,[3,1]]
->>>>>>> Stashed changes
+
             
             
         

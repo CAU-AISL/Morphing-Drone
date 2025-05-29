@@ -126,15 +126,9 @@ class MorphingDroneController(Node):
         # Synthesize magnetometer message with yaw
         mag = MagneticField()
         mag.header = msg.header
-<<<<<<< Updated upstream
-        mag.magnetic_field.x = 0.0
-        mag.magnetic_field.y = 0.0
-        mag.magnetic_field.z = float(yaw)
-=======
         mag.magnetic_field.x = -float(roll)
         mag.magnetic_field.y = float(pitch)
         mag.magnetic_field.z = -float(yaw)
->>>>>>> Stashed changes
         self.mag_data = mag
 
     def gps_callback(self, msg: Odometry):
@@ -219,66 +213,7 @@ class MorphingDroneController(Node):
         # 7) 모터 명령어 생성 및 PWM 신호 전송
         self.motor_controller.send_commands()
         
-<<<<<<< Updated upstream
-        # 2) Kalman Filter 추청 및 현재 상태에 반영
-        if self.joint_data is not None:
-            self.state.alpha = self.joint_data.position[4:8]
-            self.state.alpha = np.array(self.state.alpha).reshape((4, 1))
-            self.state.beta = self.joint_data.position[8:12]
-            self.state.beta = np.array(self.state.beta).reshape((4,1))
-        else:
-            self.get_logger().warn("joint_data is not yet received.")
-
         
-
-        # 예측, 갱신
-        self.kf.predict(self.state.v)
-        self.kf.update(self.imu_data, self.gps_data, self.mag_data, self.state.w_d)
-        # state에 반영
-        est = self.kf.x_est  # 18×1 추정 상태 벡터
-        
-        self.state.x_hat = est[0][0]
-        self.state.y_hat = est[1][0]
-        self.state.z_hat = est[2][0]
-        self.state.x_dot_hat = est[3][0]
-        self.state.y_dot_hat = est[4][0]
-        self.state.z_dot_hat = est[5][0]
-        self.state.x_ddot_hat = est[6][0]
-        self.state.y_ddot_hat = est[7][0]
-        self.state.z_ddot_hat = est[8][0]
-        self.state.phi_hat = est[9][0]
-        self.state.theta_hat = est[10][0]
-        self.state.psi_hat = est[11][0]
-        self.state.phi_dot_hat = est[12][0]
-        self.state.theta_dot_hat = est[13][0]
-        self.state.psi_dot_hat = est[14][0]
-        self.state.phi_ddot_hat = est[15][0]
-        self.state.theta_ddot_hat = est[16][0]
-        self.state.psi_ddot_hat = est[17][0]
-        
-        # 데이터 저장
-        now = time()  # wall-clock time
-        s = self.state
-        dm = self.drone_model
-
-        row = [
-            now,
-            s.x_hat, s.y_hat, s.z_hat,
-            s.phi_hat, s.theta_hat, s.psi_hat,
-            s.x_dot_hat, s.y_dot_hat, s.z_dot_hat,
-            s.phi_dot_hat, s.theta_dot_hat, s.psi_dot_hat,
-            *s.w_d.flatten(),
-            self.imu_data.orientation.x, self.imu_data.orientation.y, self.imu_data.orientation.z,
-            self.imu_data.angular_velocity.x, self.imu_data.angular_velocity.y, self.imu_data.angular_velocity.z,
-            self.imu_data.linear_acceleration.x, self.imu_data.linear_acceleration.y, self.imu_data.linear_acceleration.z
-    ]
-        self.csv_writer.writerow(row)
-        self.log_file.flush()
-=======
->>>>>>> Stashed changes
-        
-        
-
         
 
 def main(args=None):

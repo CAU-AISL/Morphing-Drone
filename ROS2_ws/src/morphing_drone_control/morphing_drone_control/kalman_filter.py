@@ -50,13 +50,9 @@ class KalmanFilter:
 
     def euler_acc(self, imu_msg, u: np.ndarray = None):  ## create roll,pitch reading from accelerometer
         acc = np.array([[imu_msg.linear_acceleration.x],
-                        [imu_msg.linear_acceleration.y],
-                        [imu_msg.linear_acceleration.z]])
-<<<<<<< Updated upstream
-        acc_by_grav = acc - (1/self.drone_model.m_t)*self.drone_model.F_ab @ self.state.w_d
-=======
+                        [-imu_msg.linear_acceleration.y],
+                        [-imu_msg.linear_acceleration.z]])
         acc_by_grav = acc - (1/self.drone_model.m_t)*self.drone_model.F_ab @ self.state.w_d**2
->>>>>>> Stashed changes
         phi_acc = np.arctan2(acc_by_grav[1], acc_by_grav[2])
         theta_acc = np.arctan2(
             -acc_by_grav[0],
@@ -82,20 +78,6 @@ class KalmanFilter:
         
         self.P     = A.dot(self.P).dot(A.T) + self.Q
     def update(self, imu_msg, gps_msg, mag_msg, u: np.ndarray = None):
-<<<<<<< Updated upstream
-        acc = np.array([[imu_msg.linear_acceleration.x],
-                        [imu_msg.linear_acceleration.y],
-                        [imu_msg.linear_acceleration.z]])
-        gyro = np.array([[imu_msg.angular_velocity.x],
-                         [imu_msg.angular_velocity.y],
-                         [imu_msg.angular_velocity.z]])
-        gps = np.array([[gps_msg.latitude],
-                        [gps_msg.longitude],
-                        [gps_msg.altitude]])
-        mag = np.array([[mag_msg.magnetic_field.x]])    ## 확인필요 z yaw 를 측정해야함
-        euler_acc = self.euler_acc(imu_msg, u)
-        z_k = np.vstack((gps, euler_acc, mag, gyro, acc))
-=======
         phi = self.state.phi_hat
         theta = self.state.theta_hat
         psi = self.state.psi_hat
@@ -125,7 +107,6 @@ class KalmanFilter:
         # 최종 관측 벡터
         z_k = np.vstack((gps, mag,vel, gyro, acc))
 
->>>>>>> Stashed changes
         H = np.block([
             [np.eye(3), np.zeros((3,15))],
             [np.zeros((3,3)), np.eye(3), np.zeros((3,12))],
