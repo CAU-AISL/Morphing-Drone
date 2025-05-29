@@ -1,6 +1,6 @@
 import numpy as np
-from .rpy2rot import rpy2rot
-from .rpy2rot_derivative import RPY2Rot_derivative
+from morphing_drone_control.rpy2rot import rpy2rot
+from morphing_drone_control.rpy2rot_derivative import RPY2Rot_derivative
 
 class ModeController:
     def __init__(self, state, guidance, drone_model,fault_detection):
@@ -9,6 +9,7 @@ class ModeController:
         self.drone_model = drone_model
         self.fault_detection = fault_detection
 
+    
     def update_abw(self):
     # 변수정의
     # State 관련
@@ -44,7 +45,7 @@ class ModeController:
         self.drone_model.update(alpha)
         I_prev = self.drone_model.prev_I_total
         I_cur = self.drone_model.cur_I_total
-        dt = self.drone_model.current_time-self.drone_model.prev_time
+        dt = 0.01 # self.drone_model.current_time-self.drone_model.prev_time
         
         kf = self.drone_model.kf
         km = self.drone_model.km 
@@ -53,16 +54,23 @@ class ModeController:
         m_t = self.drone_model.m_t
         
         w_m = self.state.w_d**2
+<<<<<<< Updated upstream
         
     # Guidance 관련 (update 되면 해야 함)
         x_d = self.guidance.x_d #maybe..?
+=======
+        # w_m[[0,2]] = w_m[[2,0]]
+        # w_m[[1,3]] = w_m[[3,1]]
+        # Guidance 관련 (update 되면 해야 함)
+        x_d = self.guidance.x_d 
+>>>>>>> Stashed changes
         y_d = self.guidance.y_d
         z_d = self.guidance.z_d
         phi_d = self.guidance.phi_d
         theta_d = self.guidance.theta_d
         psi_d = self.guidance.psi_d
         
-        if self.state.mode == 'X':
+        if self.state.mode == "X":
             
             #Z-domain에서 v 값 계산
             z_current = np.array([
@@ -147,7 +155,21 @@ class ModeController:
             ])
             K_lqr,S,E = control.lqr(A,B,Q,R)
             '''
+                        
+            
+            
+                        
+                                    
+            
+            
+
+            
+            
+            
+            
+            
             K_lqr = np.array([
+<<<<<<< Updated upstream
                 [1.00000000e+01,  9.51325204e+00,  4.47509822e+00, -2.09825237e-17,
                 -4.81629836e-16, -3.26249510e-16, -9.36288349e-16,  1.24528323e-15,
                 6.52280064e-16, -1.10683002e-17, -1.59522132e-17, -4.88391287e-18,
@@ -181,9 +203,32 @@ class ModeController:
             ])
                
                
+=======
+                [1.00000000e+00, 2.41421356e+00, 2.41421356e+00, 7.48257832e-17, 1.20450439e-15, 1.06905681e-15,
+                1.89896964e-15, 3.00731157e-15, 1.19644518e-15, 1.52914375e-15, 2.71624357e-15, 1.24514719e-15,
+                -4.00214900e-16, -3.18033428e-16, -2.74087709e-16, 6.71615503e-16, 6.16346517e-16, 1.66488590e-16],
+                [-1.21519450e-16, 4.75059309e-16, 1.06905681e-15, 1.00000000e+00, 2.41421356e+00, 2.41421356e+00,
+                2.21977561e-16, 1.11345202e-15, 1.76435471e-15, 3.97187891e-16, 8.18334026e-16, 1.11589483e-15,
+                -5.81468661e-17, 2.02080120e-17, -9.61391196e-16, -1.26842056e-15, -1.55778013e-15, -3.91532592e-16],
+                [8.03160560e-16, 1.65797339e-15, 1.19644518e-15, 1.91513472e-15, 3.16697452e-15, 1.76435471e-15,
+                1.00000000e+00, 2.41421356e+00, 2.41421356e+00, 3.72111214e-16, 1.51993082e-15, 1.02354106e-15,
+                1.73505054e-16, 1.02309147e-15, 6.18790723e-16, -1.02254418e-15, -1.40536681e-15, -1.32887755e-15],
+                [7.52454478e-16, 2.00523478e-15, 1.24514719e-15, -6.67809675e-17, 1.91657367e-15, 1.11589483e-15,
+                1.63617602e-15, 2.92274283e-15, 1.02354106e-15, 1.00000000e+00, 2.41421356e+00, 2.41421356e+00,
+                -5.70694667e-16, -4.03389960e-16, 2.87131455e-16, 3.03665531e-16, 1.22279630e-15, 7.13367074e-16],
+                [-8.03730076e-16, -1.31936645e-15, -2.74087709e-16, -1.90028954e-15, -3.05705494e-15, -9.61391196e-16,
+                1.34468517e-15, 2.20389777e-15, 6.18790723e-16, 3.79802607e-16, 7.92351595e-16, 2.87131455e-16,
+                1.00000000e+00, 2.41421356e+00, 2.41421356e+00, -5.38099351e-16, -5.18788606e-16, -6.27501753e-18],
+                [-7.22619019e-16, -1.40054552e-15, 1.66488590e-16, 8.09486407e-16, 4.45301307e-16, -3.91532592e-16,
+                1.58930112e-16, -1.39056951e-15, -1.32887755e-15, 9.07825307e-16, 2.14410802e-15, 7.13367074e-16,
+                7.09366743e-16, 5.54598190e-16, -6.27501753e-18, 1.00000000e+00, 2.41421356e+00, 2.41421356e+00]
+            ])
+            # K_lqr = np.array([      
+>>>>>>> Stashed changes
             
             v_lqr = K_lqr@error
             self.state.v = v_lqr
+            
             #I_d 값 계산(Numerical method)
             I_inv_cur = np.linalg.inv(I_cur)
             I_inv_prev = np.linalg.inv(I_prev)
@@ -191,25 +236,26 @@ class ModeController:
             
             #F_a_b 값 계산
             p2x = np.array([
-                [np.cos(np.pi/4), -np.sin(np.pi/4),0],
-                [np.sin(np.pi/4), np.cos(np.pi/4),0],
+                [np.cos(-np.pi/4), -np.sin(-np.pi/4),0],
+                [np.sin(-np.pi/4), np.cos(-np.pi/4),0],
                 [0,0,1]
             ])
-            F_a_b = p2x@(np.array([
+            F_a_b = np.array([
                 [0, kf*np.sin(beta[0][0]), -kf*np.cos(beta[0][0])],
                 [-kf*np.cos(alpha[1][0])*np.sin(beta[1][0]), -kf*np.sin(alpha[1][0])*np.sin(beta[1][0]), -kf*np.cos(beta[1][0])],
                 [0, -kf*np.sin(beta[2][0]), -kf*np.cos(beta[2][0])],
                 [kf*np.cos(alpha[3][0])*np.sin(beta[3][0]), kf*np.sin(alpha[3][0])*np.sin(beta[3][0]), -kf*np.cos(beta[3][0])]
-            ]).T)
+            ]).T
+            F_a_b = p2x@F_a_b
             
             #Tau_a_b 값 계산 #bl에 1/sqrt(2) 안곱하는 이유 궁금
-            Tau_a_b = p2x@(np.array([
+            Tau_a_b = np.array([
                 [0, kf * (bl+al) * np.cos(beta[0][0]) + km*np.sin(beta[0][0]), kf * (bl+al) * np.sin(beta[0][0]) - km * np.cos(beta[0][0])],
                 [-kf* (bl+al*np.cos(alpha[1][0]))*np.cos(beta[1][0]) + km*np.cos(alpha[1][0])*np.sin(beta[1][0]), -kf*al*np.sin(alpha[1][0])*np.cos(beta[1][0])+km*np.sin(alpha[1][0])*np.sin(beta[1][0]),kf*al*(np.sin(alpha[1][0]))**2*np.sin(beta[1][0])+kf*(bl+al*np.cos(alpha[1][0]))*np.cos(alpha[1][0])*np.sin(beta[1][0])+ km*np.cos(beta[1][0])],
                 [0,  -kf*(bl+al)*np.cos(beta[2][0]) - km*np.sin(beta[2][0]),kf*(bl+al)*np.sin(beta[2][0])-km*np.cos(beta[2][0])],
                 [kf*(bl+al*np.cos(alpha[3][0]))*np.cos(beta[3][0])-km*np.cos(alpha[3][0])*np.sin(beta[3][0]), kf*al*np.sin(alpha[3][0])*np.cos(beta[3][0])-km*np.sin(alpha[3][0])*np.sin(beta[3][0]),kf*al*(np.sin(alpha[3][0]))**2*np.sin(beta[3][0])+kf*(bl+al*np.cos(alpha[3][0]))*np.cos(alpha[3][0])*np.sin(beta[3][0])+km*np.cos(beta[3][0])]
-            ]).T)
-            
+            ]).T
+            Tau_a_b = p2x @ Tau_a_b
             #JR matrix 
             R = rpy2rot(phi,theta,psi)         # 3×3 회전 행렬
             R_T = R.T                      # RPY2Rot(obj.euler)'에 해당
@@ -225,8 +271,8 @@ class ModeController:
             ])
             
             #JR_dot matrix 
-            R = RPY2Rot_derivative(phi,theta,psi,phi_dot,theta_dot,psi_dot)
-            top_left = (1/m_t)*R
+            dR = RPY2Rot_derivative(phi,theta,psi,phi_dot,theta_dot,psi_dot)
+            top_left = (1/m_t)*dR
             top_right = np.zeros((3,3))
             bottom_left = np.zeros((3,3))
             #inv인지 zeros인지 확인
@@ -262,6 +308,7 @@ class ModeController:
             inner = v_lqr - JRdot @ J_beta @ w_m
             u_control = B_pinv@inner
             
+            
             #Control input 만듬 state class에 있는 것이 맞을지 검토해봐야 할 듯, dt가 처음엔 0일텐데 흠 -> 프로펠러 안돌텐데 그 후엔 dt바뀌니까 되겠네
             self.state.w_d = w_m + u_control[0:4]*dt
             self.state.w_d = np.sqrt(np.maximum(self.state.w_d, 0.0))
@@ -272,11 +319,17 @@ class ModeController:
                 [0,0,0,0]
             ]).T # 팔 각도 고정
             self.state.beta_dot = u_control[4:]
+<<<<<<< Updated upstream
+=======
+            # self.state.beta_dot[[0,2]] = self.state.beta_dot[[2,0]]
+            # self.state.beta_dot[[1,3]] = self.state.beta_dot[[3,1]]
+>>>>>>> Stashed changes
             
             #F_ab,Tau_ab 업데이트
             self.drone_model.F_ab = F_a_b
             self.drone_model.Tau_ab = Tau_a_b
             
+<<<<<<< Updated upstream
         elif self.state.mode == 'Y':
             #Z-domain에서 v 값 계산
             z_current = np.array([
@@ -470,56 +523,12 @@ class ModeController:
             top_right = np.zeros((3,3))
             bottom_left = np.zeros((3,3))
             bottom_right = np.zeros((3,3))
+=======
+            
+            # self.drone_model.Tau_ab[:,[0,2]]=self.drone_model.Tau_ab[:,[2,0]]
+            # self.drone_model.Tau_ab[:,[1,3]]=self.drone_model.Tau_ab[:,[3,1]]
+>>>>>>> Stashed changes
             
             
-            JRdot = np.block([
-                [top_left, top_right],
-                [bottom_left,bottom_right]
-            ])
-            
-            #J_beta, J_betadot 계산후 B matrix 
-            J_beta = np.vstack((F_a_b,Tau_a_b)) #6*4
-            
-            top = np.array([
-                [0,  -kf*np.cos(alpha[1])*np.cos(beta[1])*w_m[1], 0, kf*np.cos(alpha[3])*np.cos(beta[3])*w_m[3]],
-                [kf*np.cos(beta[0])*w_m[0],  -kf*np.sin(alpha[1])*np.cos(beta[1])*w_m[1], -kf*np.cos(beta[2])*w_m[2], kf*np.sin(alpha[3])*np.cos(beta[3])*w_m[3]],
-                [kf*np.sin(beta[0])*w_m[0],kf*np.sin(beta[1])*w_m[1], kf*np.sin(beta[2])*w_m[2],kf*np.sin(beta[3])*w_m[3]]
-            ])
-            bottom = np.array([
-                [0,kf*(bl+al*np.cos(alpha[1]))*np.sin(beta[1])*w_m[1] + km*np.cos(alpha[1])*np.cos(beta[1])*w_m[1],0,-kf*(bl+al*np.cos(alpha[3]))*np.sin(beta[3])*w_m[3] - km*np.cos(alpha[3])*np.cos(beta[3])*w_m[3]],
-                [(-kf*(bl+al)*np.sin(beta[0]) + km*np.cos(beta[0]))*w_m[0], (kf*al*np.sin(alpha[1])*np.sin(beta[1])*w_m[1] + km*np.sin(alpha[1])*np.cos(beta[1]))*w_m[1],(kf*(bl+al)*np.sin(beta[2]) - km*np.cos(beta[2]))*w_m[2], -(kf*al*np.sin(alpha[3])*np.sin(beta[3]) + km*np.sin(alpha[3])*np.cos(beta[3]))*w_m[3]],
-                [(kf*(bl+al)*np.cos(beta[0]) + km*np.sin(beta[0]))*w_m[0], (kf*al*(np.sin(alpha[1]))**2*np.cos(beta[1]) + kf*(bl+al*np.cos(alpha[1]))*np.cos(alpha[1])*np.cos(beta[1]) - km*np.sin(beta[1]))*w_m[1], (kf*(bl+al)*np.cos(beta[2]) + km*np.sin(beta[2]))*w_m[2], (kf*al*(np.sin(alpha[3]))**2*np.cos(beta[3]) + kf*(bl+al*np.cos(alpha[3]))*np.cos(alpha[3])*np.cos(beta[3]) - km*np.sin(beta[3]))*w_m[3]]
-            ])
-            J_betadot = np.vstack((top,bottom)) #6*4
-            
-            left = JR@J_beta
-            right = JR@J_betadot
-            
-            B = np.hstack((left,right)) #6*8
-            
-            #fail 난 부분 삭제
-            B = np.delete(B,[i-1,i+3],axis =1)
-            
-            #드디어 Control input 계산 명령을 주는건데 state class의 변수를 변화시키는 것이 맞나?
-            B_inv = np.linalg.inv(B)
-            lam = 1
-            B_T = B.T
-            J_beta = np.delete(J_beta,i-1,axis = 1)
-            w_m = np.delete(w_m,i-1,axis = 0)
-            inner = v_lqr - JRdot @ J_beta @ w_m
-            regularized = B_T@B+lam*np.eye(B.shape[1])
-            u_control = np.linalg.solve(regularized,B_T@inner)
-            
-            ##Control input 만듬 state class에 있는 것이 맞을지 검토해봐야 할 듯
-            w_m = np.insert(w_m,i-1,np.zeros((0,1)),axis=0)
-            self.state.w_d = w_m + np.insert(u_control[0:3,:],i-1,np.zeros((0,1)),axis=0)*dt
-            self.state.beta_dot = np.insert(u_control[3:6,:],i-1,np.zeros((0,1)),axis=0)
-            
-            #F_ab Tau_ab 업데이트
-            self.drone_model.F_ab = F_a_b
-            self.drone_model.Tau_ab = Tau_a_b
-            
-        else:  # 'H'
-            self.state.alpha = 0.0
-            self.state.beta = 0.0
-            self.state.w_d = 0.0
+        
+        

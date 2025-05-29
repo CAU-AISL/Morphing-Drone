@@ -31,6 +31,7 @@ public:
       "/joint_states",
       rclcpp::SensorDataQoS().keep_last(50),
       std::bind(&MotorSpeedsPub::jointStateCb, this, std::placeholders::_1));
+<<<<<<< Updated upstream
 
     // 4) PD 제어용 파라미터
     kp_ = this->declare_parameter("flare_kp", 2.0f);
@@ -41,6 +42,13 @@ public:
     // 5) 주기 타이머 (100ms)
     timer_ = this->create_wall_timer(
       100ms, std::bind(&MotorSpeedsPub::onTimer, this));
+=======
+    kp_ = declare_parameter("flare_kp", 2.0f);
+    kd_ = declare_parameter("flare_kd", 0.5f);
+    target_flare_.fill(0.0f);
+    prev_err_.fill(0.0f);
+    timer_ = create_wall_timer(10ms, std::bind(&MotorSpeedsPub::onTimer, this));
+>>>>>>> Stashed changes
   }
 
 private:
@@ -58,6 +66,7 @@ private:
 
   // 타이머 콜백: cmd_speeds_ → main/flare/tilt 분리 → PD 제어 → 퍼블리시
   void onTimer() {
+<<<<<<< Updated upstream
     std::array<float,4> main_speeds;
     std::array<float,4> tilt_speeds;
 
@@ -72,6 +81,20 @@ private:
       main_speeds          = {0.0f, 0.0f, 0.0f, 0.0f};
       target_flare_angles_ = {0.0f,   0.0f, 0.0f, 0.0f};
       tilt_speeds          = {0.0f,   0.0f, 0.0f, 0.0f};
+=======
+    std::array<float,4> main_s, flare_s, tilt_s;
+    // 실제 명령이 12채널 들어오면 적용
+    // 여기 변경해서 추력, 반토크 확인
+    if (cmd_speeds_.size() >= 12) {
+      for (int i = 0; i < 4; ++i) main_s[i] = cmd_speeds_[i];
+      for (int i = 0; i < 4; ++i) target_flare_[i] = cmd_speeds_[4 + i];
+      for (int i = 0; i < 4; ++i) tilt_s[i] = cmd_speeds_[8 + i];
+    } else {
+      // 디폴트 실험용 값
+      main_s      = {-330.0f, 330.0f, -330.0f, 330.0f};
+      target_flare_ = {0.0f, 0.0f, 0.0f, 0.0f};
+      tilt_s      = {0.0f, 0.0f, 0.0f, 0.0f};
+>>>>>>> Stashed changes
     }
 
     // 2) flare PD 제어

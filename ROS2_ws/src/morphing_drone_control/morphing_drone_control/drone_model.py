@@ -39,8 +39,8 @@ class DroneModel:
         self.I_total = None
         
         self.p2x = np.array([
-            [np.cos(np.pi/4), -np.sin(np.pi/4), 0],
-            [np.sin(np.pi/4), np.cos(np.pi/4), 0],
+            [np.cos(-np.pi/4), -np.sin(-np.pi/4), 0],
+            [np.sin(-np.pi/4), np.cos(-np.pi/4), 0],
             [0, 0, 1]
         ])
         
@@ -93,7 +93,7 @@ class DroneModel:
                 [-(cmArm1[0][0]-cmTot[0][0])*(cmArm1[2][0]-cmTot[2][0]),  -(cmArm1[1][0]-cmTot[1][0])*(cmArm1[2][0]-cmTot[2][0])   , (cmArm1[0][0]-cmTot[0][0])**2+(cmArm1[1][0]-cmTot[1][0])**2]
             ])
             
-            + rpy2rot(0,0,alpha[1][0])@self.I_arm2@(rpy2rot(0,0,alpha[1][0]).T)
+            + rpy2rot(0,0,alpha[1][0]+np.pi*0.5)@self.I_arm2@(rpy2rot(0,0,alpha[1][0]+np.pi*0.5).T)
             
             +m_a*np.array([
                 [(cmArm2[1][0]-cmTot[1][0])**2+(cmArm2[2][0]-cmTot[2][0])**2,   -(cmArm2[0][0]-cmTot[0][0])*(cmArm2[1][0]-cmTot[1][0]), -(cmArm2[0][0]-cmTot[0][0])*(cmArm2[2][0]-cmTot[2][0])],
@@ -101,7 +101,7 @@ class DroneModel:
                 [-(cmArm2[0][0]-cmTot[0][0])*(cmArm2[2][0]-cmTot[2][0]),  -(cmArm2[1][0]-cmTot[1][0])*(cmArm2[2][0]-cmTot[2][0])   , (cmArm2[0][0]-cmTot[0][0])**2+(cmArm2[1][0]-cmTot[1][0])**2]
             ])
             
-            + rpy2rot(0,0,alpha[2][0])@self.I_arm3@(rpy2rot(0,0,alpha[2][0]).T)
+            + rpy2rot(0,0,alpha[2][0]+np.pi)@self.I_arm3@(rpy2rot(0,0,alpha[2][0]+np.pi).T)
             
             + m_a*np.array([
                 [(cmArm3[1][0]-cmTot[1][0])**2+(cmArm3[2][0]-cmTot[2][0])**2,   -(cmArm3[0][0]-cmTot[0][0])*(cmArm3[1][0]-cmTot[1][0]), -(cmArm3[0][0]-cmTot[0][0])*(cmArm3[2][0]-cmTot[2][0])],
@@ -109,7 +109,7 @@ class DroneModel:
                 [-(cmArm3[0][0]-cmTot[0][0])*(cmArm3[2][0]-cmTot[2][0]),  -(cmArm3[1][0]-cmTot[2][0])*(cmArm3[2][0]-cmTot[2][0])   , (cmArm3[0][0]-cmTot[0][0])**2+(cmArm3[1][0]-cmTot[1][0])**2]
             ])
             
-            +rpy2rot(0,0,alpha[3][0])@self.I_arm3@(rpy2rot(0,0,alpha[3][0]).T)
+            +rpy2rot(0,0,alpha[3][0]+np.pi*1.5)@self.I_arm3@(rpy2rot(0,0,alpha[3][0]+np.pi*1.5).T)
             
             + m_a*np.array([
                 [(cmArm4[1][0]-cmTot[1][0])**2+(cmArm4[2][0]-cmTot[2][0])**2,   -(cmArm4[0][0]-cmTot[0][0])*(cmArm4[1][0]-cmTot[1][0]), -(cmArm4[0][0]-cmTot[0][0])*(cmArm4[2][0]-cmTot[2][0])],
@@ -132,7 +132,7 @@ class DroneModel:
                 [-(cmArm1[0][0]-cmTot[0][0])*(cmArm1[2][0]-cmTot[2][0]),  -(cmArm1[1][0]-cmTot[1][0])*(cmArm1[2][0]-cmTot[2][0])   , (cmArm1[0][0]-cmTot[0][0])**2+(cmArm1[1][0]-cmTot[1][0])**2]
             ])
             
-            + rpy2rot(0,0,alpha[1][0])@self.I_arm2@(rpy2rot(0,0,alpha[1][0]).T)
+            + rpy2rot(0,0,alpha[1][0]+np.pi*0.5)@self.I_arm2@(rpy2rot(0,0,alpha[1][0]+np.pi*0.5).T)
             
             +m_a*np.array([
                 [(cmArm2[1][0]-cmTot[1][0])**2+(cmArm2[2][0]-cmTot[2][0])**2,   -(cmArm2[0][0]-cmTot[0][0])*(cmArm2[1][0]-cmTot[1][0]), -(cmArm2[0][0]-cmTot[0][0])*(cmArm2[2][0]-cmTot[2][0])],
@@ -140,7 +140,7 @@ class DroneModel:
                 [-(cmArm2[0][0]-cmTot[0][0])*(cmArm2[2][0]-cmTot[2][0]),  -(cmArm2[1][0]-cmTot[1][0])*(cmArm2[2][0]-cmTot[2][0])   , (cmArm2[0][0]-cmTot[0][0])**2+(cmArm2[1][0]-cmTot[1][0])**2]
             ])
             
-            + rpy2rot(0,0,alpha[2][0])@self.I_arm3@(rpy2rot(0,0,alpha[2][0]).T)
+            + rpy2rot(0,0,alpha[2][0]+np.pi)@self.I_arm3@(rpy2rot(0,0,alpha[2][0]+np.pi).T)
             
             + m_a*np.array([
                 [(cmArm3[1][0]-cmTot[1][0])**2+(cmArm3[2][0]-cmTot[2][0])**2,   -(cmArm3[0][0]-cmTot[0][0])*(cmArm3[1][0]-cmTot[1][0]), -(cmArm3[0][0]-cmTot[0][0])*(cmArm3[2][0]-cmTot[2][0])],
@@ -148,7 +148,7 @@ class DroneModel:
                 [-(cmArm3[0][0]-cmTot[0][0])*(cmArm3[2][0]-cmTot[2][0]),  -(cmArm3[1][0]-cmTot[2][0])*(cmArm3[2][0]-cmTot[2][0])   , (cmArm3[0][0]-cmTot[0][0])**2+(cmArm3[1][0]-cmTot[1][0])**2]
             ])
             
-            +rpy2rot(0,0,alpha[3][0])@self.I_arm3@(rpy2rot(0,0,alpha[3][0]).T)
+            +rpy2rot(0,0,alpha[3][0]+np.pi*1.5)@self.I_arm3@(rpy2rot(0,0,alpha[3][0]+np.pi*1.5).T)
             
             + m_a*np.array([
                 [(cmArm4[1][0]-cmTot[1][0])**2+(cmArm4[2][0]-cmTot[2][0])**2,   -(cmArm4[0][0]-cmTot[0][0])*(cmArm4[1][0]-cmTot[1][0]), -(cmArm4[0][0]-cmTot[0][0])*(cmArm4[2][0]-cmTot[2][0])],
