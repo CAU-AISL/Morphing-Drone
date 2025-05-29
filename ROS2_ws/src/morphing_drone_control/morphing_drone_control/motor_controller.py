@@ -5,13 +5,15 @@ from rclpy.qos import QoSProfile
 
 
 class MotorController:
-    def __init__(self, node, state):
+    def __init__(self, node, state, drone_model):
         self._state = state  
         self._node = node
+        self.drone_model = drone_model
         qos_profile = QoSProfile(depth=10)
         
         self.wab_pub = self._node.create_publisher(Float32MultiArray, '/motor_wab', qos_profile)
-        self.timer = self._node.create_timer(0.1, self.send_commands)
+        dt = 0.01 # self.drone_model.current_time-self.drone_model.prev_time
+        self.timer = self._node.create_timer(dt, self.send_commands)
         
         
 
@@ -24,4 +26,4 @@ class MotorController:
         msg = Float32MultiArray()
         msg.data = data
         self.wab_pub.publish(msg)
-        # self._node.get_logger().info(f"Publishing wab: {data}")
+        self._node.get_logger().info(f"[motor_controller] publish wab: {msg.data}")

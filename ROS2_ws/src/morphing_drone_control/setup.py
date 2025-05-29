@@ -12,13 +12,14 @@ setup(
         ('share/' + package_name + '/config', ['config/motor_params.yaml']),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'geographiclib'],
     zip_safe=True,
     maintainer='YOUR_NAME',
     maintainer_email='YOUR_EMAIL@example.com',
     description='Morphing drone control node',
     license='Apache License 2.0',
     tests_require=['pytest'],
+    
     entry_points={
         'console_scripts': [
             'main_controller = morphing_drone_control.main_controller_node:main',
