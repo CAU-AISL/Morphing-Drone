@@ -608,7 +608,37 @@
           </plugin>
         </sensor>
       </link>
-      <!-- <link name="gps_link">
+      <link name="gps_link">
+        <inertial>
+          <mass>0.00001</mass>          <!-- 매우 가벼운 질량 -->
+          <inertia>
+            <ixx>1e-9</ixx>
+            <iyy>1e-9</iyy>
+            <izz>1e-9</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name="gps_collision">
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.01</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="gps_visual">
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>            <!-- 녹색 -->
+            <diffuse>0 1 0 1</diffuse>
+          </material>
+        </visual>
+
         <pose>0 0 0.002 0 0 0</pose>
         <sensor name="gps_sensor" type="gps">
           <always_on>true</always_on>
@@ -627,7 +657,7 @@
             <updateRate>5.0</updateRate>
           </plugin>
         </sensor>
-      </link> -->
+      </link>
       <joint name="B2GPS" type="fixed">
         <parent>body_link</parent>
         <child>gps_link</child>

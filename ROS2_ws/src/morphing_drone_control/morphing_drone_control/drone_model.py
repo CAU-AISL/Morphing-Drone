@@ -61,17 +61,12 @@ class DroneModel:
             
         #Imatrix 계산
         #CM 위치 계산
-            p2x = np.array([
-                [np.cos(np.pi/4), -np.sin(np.pi/4),0],
-                [np.sin(np.pi/4), np.cos(np.pi/4),0],
-                [0,0,1]
-                ])
-            
-            acml = self.acml
-            m_a = self.m_a
-            m_t = self.m_t
-            bl = self.bl
-            al = self.al
+        
+        acml = self.acml
+        m_a = self.m_a
+        m_t = self.m_t
+        bl = self.bl
+        al = self.al
             
         cmArm1 = np.array([[acml*np.cos(alpha[0][0])+bl],
                            [acml*np.sin(alpha[0][0])],

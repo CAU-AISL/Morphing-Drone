@@ -26,4 +26,4 @@ class MotorController:
         msg = Float32MultiArray()
         msg.data = data
         self.wab_pub.publish(msg)
-        self._node.get_logger().info(f"[motor_controller] publish wab: {msg.data}")
+        # self._node.get_logger().info(f"[motor_controller] publish wab: {msg.data}")

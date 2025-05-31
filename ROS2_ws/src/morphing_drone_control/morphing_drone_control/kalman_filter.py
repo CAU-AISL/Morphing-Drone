@@ -74,7 +74,7 @@ class KalmanFilter:
             self.dt * np.eye(6)
         ])
         
-        self.x_est = A.dot(self.x_est) # + B.dot(v) if v is not None else A.dot(self.x_est)
+        self.x_est = A.dot(self.x_est)  + B.dot(v) if v is not None else A.dot(self.x_est)
         
         self.P     = A.dot(self.P).dot(A.T) + self.Q
     def update(self, imu_msg, gps_msg, mag_msg, u: np.ndarray = None):
@@ -84,12 +84,12 @@ class KalmanFilter:
         R = rpy2rot(phi,theta,psi)
         R_T = R.T
         # 3x1 으로 확실히 reshape 보장
-        acc = R_T @ (np.array([[-imu_msg.linear_acceleration.x],
-                                [imu_msg.linear_acceleration.y],
+        acc = R_T @ (np.array([[imu_msg.linear_acceleration.x],
+                                [-imu_msg.linear_acceleration.y],
                                 [-imu_msg.linear_acceleration.z]]).reshape((3, 1)))  + np.array([0,0,9.81]).reshape(-1,1)
 
-        gyro = np.array([[-imu_msg.angular_velocity.x],
-                        [imu_msg.angular_velocity.y],
+        gyro = np.array([[imu_msg.angular_velocity.x],
+                        [-imu_msg.angular_velocity.y],
                         [-imu_msg.angular_velocity.z]]).reshape((3, 1))
 
         gps = np.array([[gps_msg.pose.pose.position.x],

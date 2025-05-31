@@ -28,7 +28,6 @@ public:
     target_flare_.fill(0.0f);
     prev_err_.fill(0.0f);
     timer_ = create_wall_timer(10ms, std::bind(&MotorSpeedsPub::onTimer, this));
-
   }
 
 private:
@@ -43,13 +42,13 @@ private:
     std::array<float,4> main_s, flare_s, tilt_s;
     // 실제 명령이 12채널 들어오면 적용
     // 여기 변경해서 추력, 반토크 확인
-    if (cmd_speeds_.size() >= 12) {
+    if (cmd_speeds_.size() >= 13) {
       for (int i = 0; i < 4; ++i) main_s[i] = cmd_speeds_[i];
       for (int i = 0; i < 4; ++i) target_flare_[i] = cmd_speeds_[4 + i];
       for (int i = 0; i < 4; ++i) tilt_s[i] = cmd_speeds_[8 + i];
     } else {
       // 디폴트 실험용 값
-      main_s      = {-330.0f, 330.0f, -330.0f, 330.0f};
+      main_s      = { 300.0f, 0.0f, 0.0f, 0.0f};
       target_flare_ = {0.0f, 0.0f, 0.0f, 0.0f};
       tilt_s      = {0.0f, 0.0f, 0.0f, 0.0f};
     }

@@ -53,7 +53,7 @@ class DroneState:
         self.beta  = np.zeros((4, 1))
         self.beta_dot  = np.zeros((4, 1))
         self.w_d = np.array([
-            -330.0, 330.0, -330.0, 330.0
+            330.0, -330.0, 331.0, -331.0
         ]).reshape(-1,1)
 
         self.mode = "X"
@@ -67,7 +67,7 @@ class MorphingDroneController(Node):
         
         # 1) 파라미터 선언 -- 수정필요
         param_defaults = {
-            'bodyMass':      1.289,
+            'bodyMass':      0.733,
             'armMass':       0.139,
             'armcmLength':   0.139113738822933,
             'armLength':     0.1595,
@@ -83,7 +83,7 @@ class MorphingDroneController(Node):
             'Izzb':          0.002162122,
             'Ixzb':          -1.835200000000000e-05,
             'ThrustCoeff':   2.496609523809524e-06,
-            'DragCoeff':     4.755446712018140e-08     # needs proper parameters
+            'DragCoeff':     2.755446712018140e-07    # needs proper parameters
         }
         for name, default in param_defaults.items():
             self.declare_parameter(name, default)
@@ -126,8 +126,8 @@ class MorphingDroneController(Node):
         # Synthesize magnetometer message with yaw
         mag = MagneticField()
         mag.header = msg.header
-        mag.magnetic_field.x = -float(roll)
-        mag.magnetic_field.y = float(pitch)
+        mag.magnetic_field.x = float(roll)
+        mag.magnetic_field.y = -float(pitch)
         mag.magnetic_field.z = -float(yaw)
         self.mag_data = mag
 
@@ -212,6 +212,7 @@ class MorphingDroneController(Node):
 
         # 7) 모터 명령어 생성 및 PWM 신호 전송
         self.motor_controller.send_commands()
+        
         
         
         
