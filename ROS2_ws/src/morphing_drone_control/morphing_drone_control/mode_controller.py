@@ -289,7 +289,74 @@ class ModeController:
             
             # self.drone_model.Tau_ab[:,[0,2]]=self.drone_model.Tau_ab[:,[2,0]]
             # self.drone_model.Tau_ab[:,[1,3]]=self.drone_model.Tau_ab[:,[3,1]]
-            
+        else:  # ‘H’
+            b1 = beta[0][0]
+            b2 = beta[1][0]
+            b3 = beta[2][0]
+            b4 = beta[3][0]
+            a1 = alpha[0][0]
+            a2 = alpha[1][0]
+            a3 = alpha[2][0]
+            a4 = alpha[3][0]
+            L = al
+            k_f = kf
+            k_m=km
+            F = np.array([
+                [kf*np.sin(b1)*np.sin(np.pi/4-a1), -kf*np.sin(b2)*np.cos(np.pi/4-a2), -k_f*np.sin(b3)*np.sin(np.pi/4 - a3), k_f*np.sin(b4)*np.cos(np.pi/4-a4)],
+                [k_f*np.sin(b1)*np.cos(np.pi/4-a1), k_f*np.sin(b2)*np.sin(np.pi/4-a2), -k_f*np.sin(b3)*np.cos(np.pi/4-a3), -k_f*np.sin(b4)*np.sin(np.pi/4-a4)],
+                [-k_f*np.cos(b1), -k_f*np.cos(b2), -k_f*np.cos(b3), -k_f*np.cos(b4)]
+            ])
+            tau = np.array([
+                [L*k_f*np.cos(b1)*np.sin(np.pi/4-a1)+k_m*np.sin(b1)*np.sin(np.pi/4-a1), -L*k_f*np.cos(b2)*np.cos(np.pi/4-a2)+k_m*np.sin(b2)*np.cos(np.pi/4-a2), -L*k_f*np.cos(b3)*np.sin(np.pi/4-a3)-k_m*np.sin(b3)*np.sin(np.pi/4-a3), L*k_f*np.cos(b4)*np.cos(np.pi/4-a4)-k_m*np.sin(b4)*np.cos(np.pi/4-a4)],
+                [L*k_f*np.cos(b1)*np.cos(np.pi/4-a1)+k_m*np.sin(b1)*np.os(np.pi/4-a1), L*k_f*np.cos(b2)*np.sin(np.pi/4-a2)-k_m*np.sin(b2)*np.sin(np.pi/4-a2), -L*k_f*np.cos(b3)*np.cos(np.pi/4-a3)-k_m*np.sin(b3)*np.cos(np.pi/4-a3), -L*k_f*np.cos(b4)*np.sin(np.pi/4-a4)+k_m*np.sin(b4)*np.sin(np.pi/4-a4)],
+                [L*k_f*np.sin(b1)-k_m*np.cos(b1), L*k_f*np.sin(b2)+k_m*np.cos(b2), L*k_f*np.sin(b3)-k_m*np.cos(b3), L*k_f*np.sin(b4)+k_m*np.cos(b4)]
+            ])
+            bRi = rpy2rot(phi,theta,psi)
+            R = bRi.T
+            B = np.linalg.inv(I_cur)@tau
+            C=(1/m_t) * (R@F)
+            A = np.vstack([C[2],B])
+            z_des = np.array([
+                [z_d,0,phi_d,0,theta_d,0,psi_d,0]
+            ]).T
+            z = np.array([
+                [z,z_dot,phi,phi_dot,theta,theta_dot,psi,psi_dot]
+            ]).T
+            e = z_des-z
+            K_H = np.array([
+                [22.3606797749979, 6.76175713479831, 3.17187005782990e-14, 1.67998582725492e-15, -5.10422023351287e-14, -1.95010219470621e-15, -1.69751621740729e-14, 1.60838999422581e-15],
+                [1.13347232424008e-14, 4.37545952307856e-15, 31.6227766016837, 8.01533238258824, -3.27493164759318e-13, -3.66746303487621e-14, -1.16359055183032e-14, -4.58641139186953e-15],
+                [4.59979363370932e-15, 6.00800720787557e-16, -5.37130300656578e-13, -4.62414253308719e-14, 100.000000000000, 14.1774468787578, 2.82287631764139e-13, 8.02392579044950e-14],
+                [2.90555177486225e-14, 6.88242373873310e-15, 5.11473850929024e-14, 3.01098195798760e-15, -6.40810119780477e-13, -8.92760557648796e-15, 31.6227766016838, 8.01533238258823]
+                ])
+            v=K_H@e
+            u = np.linalg.inv(A)@(np.array([
+                [-9.81],
+                [0],
+                [0],
+                [0]
+            ])+v)
+            if beta[0][0] < (np.pi/180)*30:
+                self.state.beta_dot = np.array([
+                    [(np.pi/180)*0.003],
+                    [-(np.pi/180)*0.003],
+                    [(np.pi/180)*0.003],
+                    [-(np.pi/180)*0.003],
+                ])
+            else:
+                self.state.beta_dot = np.array([
+                    [0],
+                    [0],
+                    [0],
+                    [0]
+                ])
+            self.state.alpha = np.array([
+                [(np.pi/180)*30],
+                [-(np.pi/180)*30],
+                [(np.pi/180)*30],
+                [-(np.pi/180)*30],
+            ])
+            self.state.w_d = u    
             
         
         

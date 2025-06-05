@@ -95,7 +95,7 @@ class MorphingDroneController(Node):
         self.drone_model.update(alpha=self.state.alpha)
         self.kf = KalmanFilter(self.drone_model, self.state)
         
-        self.guidance = GuidanceManager(self.state)
+        self.guidance = GuidanceManager(self.state,self.drone_model)
         self.fault_detection = FaultDetection(self.state)
         self.mode_controller = ModeController(self.state,self.guidance,self.drone_model,self.fault_detection)
         
@@ -113,7 +113,7 @@ class MorphingDroneController(Node):
         self.create_subscription(JointState, '/joint_states', self.joint_state_callback, 10)
         self.x_est_pub = self.create_publisher(Float32MultiArray, '/kalman/x_est', 10)
 
-        # Control loop timer (10ms)
+        # Control loop timer (1ms)
         self.timer = self.create_timer(0.01, self.control_loop)
         
 
@@ -204,6 +204,8 @@ class MorphingDroneController(Node):
         # TODO: 3) Navigation - Fault Detection
         # TODO: 4) Navigation - Mode Classification 
         # TODO: 5) Guidance(Ros2 와 Controller 좌표축 감안할것)
+        if self.state.mode == "H":
+            self.guidance.Hcommand()
 
         # 6) Controller - 제어기에서 제어 출력 계산(w_d², α̇_d, β̇_d) 및 state에 업데이트
         self.mode_controller.update_abw()

@@ -2,6 +2,7 @@ from std_msgs.msg import Float32MultiArray
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile
+import numpy as np
 
 
 class MotorController:
@@ -12,7 +13,7 @@ class MotorController:
         qos_profile = QoSProfile(depth=10)
         
         self.wab_pub = self._node.create_publisher(Float32MultiArray, '/motor_wab', qos_profile)
-        dt = 0.01 # self.drone_model.current_time-self.drone_model.prev_time
+        dt = 0.001 # self.drone_model.current_time-self.drone_model.prev_time
         self.timer = self._node.create_timer(dt, self.send_commands)
         
         
@@ -21,6 +22,7 @@ class MotorController:
         data = []
         data += [float(x) for x in self._state.w_d.flatten()]
         data += [float(a) for a in self._state.alpha.flatten()]
+        # self._state.beta_dot = np.clip(self._state.beta_dot, -1.0, 1.0)
         data += [float(b) for b in self._state.beta_dot.flatten()]
         
         msg = Float32MultiArray()

@@ -30,6 +30,7 @@ def generate_launch_description():
                     executable='main_controller',
                     name='morphing_drone_controller',
                     output='screen',
+                    parameters=[{'use_sim_time': True}],
                     # parameters=[os.path.join(pkg_desc, 'config', 'your_params.yaml')],
                 )
             ]
@@ -40,6 +41,6 @@ def generate_launch_description():
             package='motor_speeds_pub',
             executable='motor_speeds_pub',
             name='motor_speeds_pub',
-            output='screen',
+            output='screen',parameters=[{'use_sim_time': True}],
         ),
     ])
