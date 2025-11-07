@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Jeong"
+  given-names: "Inyoung"
+- family-names: "Woo"
+  given-names: "Jonghyun"
+title: "Morphing-Drone"
+version: 1.0.0
+// doi: 10.5281/zenodo.1234
+date-released: 2025-11-06
+url: "https://github.com/CAU-AISL/Morphing-Drone"
