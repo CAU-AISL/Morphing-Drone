@@ -29,7 +29,7 @@ drone1_initStates = [0, 0, 0, ...      % X, Y, Z
 drone1_initInputs = [1.5, 1.5, 1.5, 1.5, 0, 0, 0, 0]'; % w1, w2, w3, w4, wb3
 
 drone1_initFlare      = D2R*[0, 0, 0, 0]';       % rad
-drone1_targetFlare    = D2R*[0, 0, 0, 0]';     % rad
+drone1_targetFlare    = D2R*[0, -40, 0, 40]';     % rad
 drone1_initTilt       = D2R*[0, 0, 0, 0]';       % rad
 
 % 드론 몸체 좌표(4개 암 + 중앙 + payload)
@@ -59,15 +59,21 @@ drone1 = morphing_mk2(drone1_Params, ...
 %% 원하는 위치 명령
 commandSig = containers.Map({'x_des','y_des','z_des','phi_des','theta_des','psi_des'}, {2, 2, -2, 0, 0, 0});
 
-dt = 0.01;
+dt = 0.001;
+t_delay = 0.25;
+drone1.t_delay = t_delay;
 numSteps = simulationTime/dt;
 
 for i = 1:numSteps
-    if i > 3000
+    if i > 10000
         drone1.SetLQR_Gain();
         drone1.StopMotor();
+        
+        if i>10000 + t_delay/dt
         drone1.FailsafeCtrl(commandSig);
-        %drone1.AttitudeCtrl(commandSig);
+        else
+        drone1.AttitudeCtrl(commandSig);
+        end
     else
         drone1.SetLQR_Gain();
         drone1.AttitudeCtrl(commandSig);
@@ -94,11 +100,6 @@ for i = 1:numSteps
      %     break;
      % end
 end
-
-%% ----------------------------
-%    여기까지가 "데이터만 수집"
-%    이제부터 "모아서 한 번에 플롯"
-%% ----------------------------
 
 %% 시간 인덱스 계산
 [~, idx_10s] = min(abs(time - 10));

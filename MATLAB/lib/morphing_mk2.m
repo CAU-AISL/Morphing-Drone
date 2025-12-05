@@ -1,8 +1,10 @@
 classdef morphing_mk2 < handle
+    %% MEMBERS
     properties
         g
         t
         dt
+        t_delay
         tf
         kf
         km
@@ -60,6 +62,9 @@ classdef morphing_mk2 < handle
         matA
         matB
 
+    end
+
+    properties
         x_des  %  x 참조
         y_des
         z_des
@@ -82,22 +87,49 @@ classdef morphing_mk2 < handle
         z_error
         z
         dz
+        % for PID
+        % phi_des
+        % phi_err
+        % phi_err_prev
+        % phi_err_sum
+        %
+        % theta_des
+        % theta_err
+        % theta_err_prev
+        % theta_err_sum
+        %
+        % psi_des
+        % psi_err
+        % psi_err_prev
+        % psi_err_sum
+        %
+        % zdot_des
+        % zdot_err
+        % zdot_err_prev
+        % zdot_err_sum
 
         K_lqr   % LQR gain
         v_lqr   % LQR input
-    end
+        
+        
 
+        
+
+        servo_alpha
+        servo_beta
+    end
+    
     methods
+        %% CONSTRUCTOR
         function obj = morphing_mk2(params, initStates, initInputs, initFlare, targetFlare, initTilt, simTime)
             obj.g = 9.81;
             obj.t = 0.0;
-            obj.dt = 0.01;
+            obj.dt = 0.001;
+            obj.t_delay = 0;
             obj.tf = simTime;
             obj.alpha = initFlare;
             obj.targetalpha = targetFlare;
             obj.beta = initTilt;
-
-
 
             obj.m_b = params('bodyMass');
             obj.m_a = params('armMass');
@@ -105,9 +137,6 @@ classdef morphing_mk2 < handle
             obj.acml = params('armcmLength');
             obj.al = params('armLength');
             obj.bl = params('bodyLength');
-
-
-
 
             obj.I_arm1 = [params('Ixxa'),    0,               -params('Ixza');  ...
                 0,                 params('Iyya'),   0; ...
@@ -163,18 +192,23 @@ classdef morphing_mk2 < handle
             obj.w_b = obj.u(5:8);    % wb3 (tilt motor omega)
 
             obj.z_error = zeros(18,1);
+            max_rate_alpha = 420; %degree/s
+            max_rate_beta = 420;
+
+            obj.servo_alpha = ServoMotorModel(4, max_rate_alpha, obj.dt);
+            obj.servo_beta  = ServoMotorModel(4, max_rate_beta,  obj.dt);
+
+            obj.matA = [zeros(6,6), eye(6), zeros(6,6);...
+                        zeros(6,6), zeros(6,6), eye(6);...
+                        zeros(6,6), zeros(6,6), zeros(6,6)];
+            obj.matB =[zeros(12,6);...
+                            eye(6)];
         end
-
+        
         function obj = SetLQR_Gain(obj)
+            %%Linear model
 
-            matA = [zeros(6,6), eye(6), zeros(6,6);...
-                zeros(6,6), zeros(6,6), eye(6);...
-                zeros(6,6), zeros(6,6), zeros(6,6)];
-            obj.matA = matA;
 
-            matB = [zeros(12,6);...
-                eye(6)];
-            obj.matB = matB;
             matC = eye(18);
 
             matD = zeros(6,6);
@@ -183,15 +217,16 @@ classdef morphing_mk2 < handle
 
             n = size(matA,1);
             m = size(matB,2);
-            if obj.t>30
-                Q = [eye(3), zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3);...
-                    zeros(3,3), 20*eye(3), zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3);...
-                    zeros(3,3), zeros(3,3), eye(3), zeros(3,3), zeros(3,3), zeros(3,3);...
-                    zeros(3,3), zeros(3,3), zeros(3,3), 20*eye(3), zeros(3,3), zeros(3,3);...
-                    zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3), eye(3), zeros(3,3);...
-                    zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3), 20*eye(3)];
-            else
+            if obj.t>10 + obj.t_delay
                 Q = [10*eye(3), zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3);...
+                    zeros(3,3), 10*eye(3), zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3);...
+                    zeros(3,3), zeros(3,3), 20*eye(3), zeros(3,3), zeros(3,3), zeros(3,3);...
+                    zeros(3,3), zeros(3,3), zeros(3,3), 20*eye(3), zeros(3,3), zeros(3,3);...
+                    zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3), 10*eye(3), zeros(3,3);...
+                    zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3), 10*eye(3)];
+
+            else
+                Q = [eye(3), zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3);...
                     zeros(3,3), eye(3), zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3);...
                     zeros(3,3), zeros(3,3), eye(3), zeros(3,3), zeros(3,3), zeros(3,3);...
                     zeros(3,3), zeros(3,3), zeros(3,3), eye(3), zeros(3,3), zeros(3,3);...
@@ -202,7 +237,7 @@ classdef morphing_mk2 < handle
 
             [K, S, e] = lqr(matA, matB, Q, R);
             obj.K_lqr = K;  % 객체 속성에 저장
-            %
+
             % disp('LQR Gain K =');
             % disp(K);
         end
@@ -257,7 +292,7 @@ classdef morphing_mk2 < handle
             b = inv(obj.I_tot_prev);
 
             obj.dI_totinv = (a-b)/obj.dt;
-            % disp(obj.dI_totinv);
+            %   disp(obj.dI_totinv);
 
 
         end
@@ -336,7 +371,7 @@ classdef morphing_mk2 < handle
             obj.dx(4:6) = 1 / obj.m_t * ([0; 0; obj.m_t*obj.g] + R * obj.F_a_b * obj.w_m);  % no wb3 input
 
             % disp('F');
-            disp([0; 0; obj.m_t*obj.g] + R * obj.F_a_b * obj.w_m);
+            % disp([0; 0; obj.m_t*obj.g] + R * obj.F_a_b * obj.w_m);
 
             phi = obj.euler(1); theta = obj.euler(2);
 
@@ -357,7 +392,7 @@ classdef morphing_mk2 < handle
 
             % disp('w_m');
             % disp(obj.w_m);
-            %
+
 
             bRi = RPY2Rot(obj.euler);
             R = bRi';
@@ -382,13 +417,13 @@ classdef morphing_mk2 < handle
         function obj = UpdateState(obj)
             obj.t = obj.t + obj.dt;
 
-            obj.alpha = obj.alpha + obj.dalpha .* obj.dt;
-            obj.beta(1:4) = obj.beta(1:4) + obj.w_b .* obj.dt;
+            obj.alpha     = obj.servo_alpha.forward(obj.dalpha);
+            obj.beta(1:4) = obj.servo_beta.forward(obj.w_b);
 
             % disp(obj.alpha)
 
 
-            if obj.t>30   % for failsafe controller
+            if obj.t>10 + obj.t_delay  % for failsafe controller
                 obj.EvalfailsafeEOM();
                 %obj.EvalEOM();
             else           % for attitude controller
@@ -421,7 +456,7 @@ classdef morphing_mk2 < handle
 
 
 
-            if obj.t > 0
+            if obj.t > 10 + obj.t_delay
                 obj.StartMorph();
             end
 
@@ -500,11 +535,17 @@ classdef morphing_mk2 < handle
             obj.psi_des = pi/180*refSig('psi_des');
 
 
+
+            %% 실제 코드
+
             % 매핑 인덱스 정의 (obj.x의 인덱스를 z_current의 인덱스에 대응)
             mapping = [1 2 3 10 11 12 4 5 6 13 14 15 7 8 9 16 17 18];
 
+            %%
             %새로운 z_current 생성
             z_current = obj.x(mapping);
+            %%
+
 
             z_ref = zeros(18,1);
 
@@ -519,7 +560,7 @@ classdef morphing_mk2 < handle
 
 
             obj.v_lqr   =  obj.K_lqr * (z_ref-z_current);
-            %
+
             % disp('obj.v_lqr');
             % disp(obj.v_lqr);
 
@@ -564,8 +605,8 @@ classdef morphing_mk2 < handle
             v = B*obj.u_control + obj.JRdot*obj.J_beta * obj.w_m;
             % disp('u_control')
             % disp(obj.u_control);
-            %
-            %
+
+
             % disp('JR');
             % disp(obj.JR);
             % disp('JR_dot');
@@ -578,7 +619,7 @@ classdef morphing_mk2 < handle
             % disp(B);
             % disp('A');
             % disp(obj.JRdot*obj.J_beta * obj.w_m);
-            %
+
 
             % disp(obj.u_control);
             obj.w_m = obj.w_m + obj.u_control(1:4).*obj.dt;
@@ -589,6 +630,7 @@ classdef morphing_mk2 < handle
 
         end
 
+        %%failsafe control
         function obj = FailsafeCtrl(obj, refSig)
 
             obj.x_des = refSig('x_des');
@@ -667,8 +709,18 @@ classdef morphing_mk2 < handle
             obj.w_m = obj.w_m + [0,obj.u_control(1:3)']'.*obj.dt;
 
             obj.w_b(2:4) = obj.u_control(4:6);
-
+            obj.w_b(1) = 0;
         end
+
+
+
+
+
+
     end
+
+
+
 end
+
 
