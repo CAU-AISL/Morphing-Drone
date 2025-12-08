@@ -7,6 +7,20 @@ bold_width = 1.5;
 line_width = 1.5;
 font_size = 12;
 % load('logs\morphing_mk2_log_delay0_3.mat');
+load('logs\morphing_mk2_log_20251208_143746.mat');
+
+CoGplot = figure();
+CoGplot.Theme = 'light';
+CoGplot.Position(3:4) = response_size;
+subplot(3, 1, 1);
+hold on; grid on;
+plot(t, CM(:, 1));
+subplot(3, 1, 2);
+hold on; grid on;
+plot(t, CM(:, 2));
+subplot(3, 1, 3);
+hold on; grid on;
+plot(t, CM(:, 3));
 
 % [pos_n, pos_e, pos_d] = deal(X(:, 1), X(:, 2), X(:, 3));
 % [ref_pn, ref_pe, ref_pd] = deal(2*ones([length(t), 1]), 2*ones([length(t), 1]), -2*ones([length(t), 1]));
