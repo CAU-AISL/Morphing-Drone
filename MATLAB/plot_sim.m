@@ -371,7 +371,7 @@ plot(Delay045.t, rad2deg(Delay045.Alpha(:, 4)), 'LineWidth', line_width, 'LineSt
 plot(Delay050.t, rad2deg(Delay050.Alpha(:, 4)), 'LineWidth', line_width, 'LineStyle', '-.');
 ylabel('$\alpha_4$ (deg)', 'Interpreter', 'latex', 'FontSize', font_size);
 xlabel('time (s)', 'Interpreter', 'latex', 'FontSize', font_size);
-% print(FlareCmprsnPlot, 'image/fig_flare_comparison_td', '-dpng', '-r600');
+print(FlareCmprsnPlot, 'image/fig_flare_comparison_td', '-dpng', '-r600');
 
 TiltMinMax = [-115, 115];
 TiltPlotLim = [-130, 130];
