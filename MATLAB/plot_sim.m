@@ -7,20 +7,6 @@ bold_width = 1.5;
 line_width = 1.5;
 font_size = 12;
 % load('logs\morphing_mk2_log_delay0_3.mat');
-load('logs\morphing_mk2_log_20251208_143746.mat');
-
-CoGplot = figure();
-CoGplot.Theme = 'light';
-CoGplot.Position(3:4) = response_size;
-subplot(3, 1, 1);
-hold on; grid on;
-plot(t, CM(:, 1));
-subplot(3, 1, 2);
-hold on; grid on;
-plot(t, CM(:, 2));
-subplot(3, 1, 3);
-hold on; grid on;
-plot(t, CM(:, 3));
 
 % [pos_n, pos_e, pos_d] = deal(X(:, 1), X(:, 2), X(:, 3));
 % [ref_pn, ref_pe, ref_pd] = deal(2*ones([length(t), 1]), 2*ones([length(t), 1]), -2*ones([length(t), 1]));
@@ -142,17 +128,17 @@ plot(t, CM(:, 3));
 % print('image/figTiltAngles_x.png', '-dpng', '-r500');
 
 %%
-noDelay = load('logs\morphing_mk2_log_0_00_instant_detect.mat');
-Delay005 = load('logs\morphing_mk2_log_0_05.mat');
-Delay010 = load('logs\morphing_mk2_log_0_10.mat');
-Delay015 = load('logs\morphing_mk2_log_0_15.mat');
-Delay020 = load('logs\morphing_mk2_log_0_20.mat');
-Delay025 = load('logs\morphing_mk2_log_0_25.mat');
-Delay030 = load('logs\morphing_mk2_log_0_30.mat');
-Delay035 = load('logs\morphing_mk2_log_0_35.mat');
-Delay040 = load('logs\morphing_mk2_log_0_40.mat');
-Delay045 = load('logs\morphing_mk2_log_0_45.mat');
-Delay050 = load('logs\morphing_mk2_log_0_50.mat');
+noDelay = load('logs\data_delay\morphing_mk2_log_0_00_instant_detect.mat');
+Delay005 = load('logs\data_delay\morphing_mk2_log_0_05.mat');
+Delay010 = load('logs\data_delay\morphing_mk2_log_0_10.mat');
+Delay015 = load('logs\data_delay\morphing_mk2_log_0_15.mat');
+Delay020 = load('logs\data_delay\morphing_mk2_log_0_20.mat');
+Delay025 = load('logs\data_delay\morphing_mk2_log_0_25.mat');
+Delay030 = load('logs\data_delay\morphing_mk2_log_0_30.mat');
+Delay035 = load('logs\data_delay\morphing_mk2_log_0_35.mat');
+Delay040 = load('logs\data_delay\morphing_mk2_log_0_40.mat');
+Delay045 = load('logs\data_delay\morphing_mk2_log_0_45.mat');
+Delay050 = load('logs\data_delay\morphing_mk2_log_0_50.mat');
 
 PosCmprsnPlot = figure();
 PosCmprsnPlot.Theme = 'light';
@@ -203,7 +189,7 @@ plot(Delay050.t, Delay050.X(:, 3), 'LineWidth', line_width, 'LineStyle', '-.');
 ylim([-3, 0.5]);
 ylabel('$r_d$ (m)', 'Interpreter', 'latex', 'FontSize', font_size);
 xlabel('time (s)', 'Interpreter', 'latex', 'FontSize', font_size);
-print(PosCmprsnPlot, 'image/fig_position_comparison_td', '-dpng', '-r600');
+print(PosCmprsnPlot, 'image/time_delay/fig_position_comparison_td', '-dpng', '-r600');
 
 AttCmprsnPlot = figure();
 AttCmprsnPlot.Theme = 'light';
@@ -258,7 +244,7 @@ legend([index_00, index_05, index_10, index_15, index_20, index_25, index_30, in
        {'No Delay', '0.05s', '0.10s', '0.15s', '0.20s', '0.25s',...
        '0.30s', '0.35s', '0.40s', '0.45s', '0.50s'},...
        'Location', 'northwest', 'Interpreter', 'latex', 'FontSize', 5, 'FontWeight','bold');
-print(AttCmprsnPlot, 'image/fig_attitude_comparison_td', '-dpng', '-r600');
+print(AttCmprsnPlot, 'image/time_delay/fig_attitude_comparison_td', '-dpng', '-r600');
 
 PropCmprsnPlot = figure();
 PropCmprsnPlot.Theme = 'light';
@@ -323,7 +309,7 @@ plot(Delay050.t, Delay050.Wm(:, 4), 'LineWidth', line_width, 'LineStyle', '-.');
 ylim([0, 4]);
 ylabel('$\omega_4^2$ $($rad/s$)^2$', 'Interpreter', 'latex', 'FontSize', font_size);
 xlabel('time (s)', 'Interpreter', 'latex', 'FontSize', font_size);
-print(PropCmprsnPlot, 'image/fig_prop_comparison_td', '-dpng', '-r600');
+print(PropCmprsnPlot, 'image/time_delay/fig_prop_comparison_td', '-dpng', '-r600');
 
 FlareCmprsnPlot = figure();
 FlareCmprsnPlot.Theme = 'light';
@@ -385,7 +371,7 @@ plot(Delay045.t, rad2deg(Delay045.Alpha(:, 4)), 'LineWidth', line_width, 'LineSt
 plot(Delay050.t, rad2deg(Delay050.Alpha(:, 4)), 'LineWidth', line_width, 'LineStyle', '-.');
 ylabel('$\alpha_4$ (deg)', 'Interpreter', 'latex', 'FontSize', font_size);
 xlabel('time (s)', 'Interpreter', 'latex', 'FontSize', font_size);
-print(FlareCmprsnPlot, 'image/fig_flare_comparison_td', '-dpng', '-r600');
+print(FlareCmprsnPlot, 'image/time_delay/fig_flare_comparison_td', '-dpng', '-r600');
 
 TiltMinMax = [-115, 115];
 TiltPlotLim = [-130, 130];
@@ -461,7 +447,7 @@ plot(noDelay.t, TiltMinMax(2)*ones([length(noDelay.t), 1]), 'r--', 'LineWidth', 
 ylim([-130, 50]);
 ylabel('$\beta_4$ (deg)', 'Interpreter', 'latex', 'FontSize', font_size);
 xlabel('time (s)', 'Interpreter', 'latex', 'FontSize', font_size);
-print(TiltCmprsnPlot, 'image/fig_tilt_comparison_td', '-dpng', '-r600');
+print(TiltCmprsnPlot, 'image/time_delay/fig_tilt_comparison_td', '-dpng', '-r600');
 
 
 % title('Legend for Tilt Comparison', 'Interpreter', 'latex', 'FontSize', font_size);
@@ -801,4 +787,34 @@ print(TiltCmprsnPlot, 'image/fig_tilt_comparison_td', '-dpng', '-r600');
 % print('image/figTiltAngles_y.png', '-dpng', '-r500');
 % 
 
+%%
+cm_x2o = load('logs/data_cm/morphing_mk2_log_CMdata_O.mat');
+cm_x2h = load('logs/data_cm/morphing_mk2_log_CMdata_H.mat');
+cm_x2y = load('logs/data_cm/morphing_mk2_log_CMdata_Y.mat');
 
+cz = cos(deg2rad(45));
+sz = sin(deg2rad(45));
+rot_p2x = [cz, -sz, 0;...
+           sz,  cz, 0;...
+            0,   0, 1];
+m2cm = 100;
+cm_x2o.CM = (rot_p2x*(cm_x2o.CM'))'.*m2cm;
+cm_x2h.CM = (rot_p2x*(cm_x2h.CM'))'.*m2cm;
+cm_x2y.CM = (rot_p2x*(cm_x2y.CM'))'.*m2cm;
+
+CoGplot = figure();
+CoGplot.Theme = 'light';
+CoGplot.Position(3:4) = response_size;
+subplot(2, 1, 1);
+hold on; grid on;
+plot(cm_x2o.t, cm_x2o.CM(:, 1));
+plot(cm_x2h.t, cm_x2h.CM(:, 1));
+plot(cm_x2y.t, cm_x2y.CM(:, 1));
+ylabel('CoG $r_x$ (cm)', 'Interpreter', 'latex', 'FontSize', font_size);
+subplot(2, 1, 2);
+hold on; grid on;
+plot(cm_x2o.t, cm_x2o.CM(:, 2));
+plot(cm_x2h.t, cm_x2h.CM(:, 2));
+plot(cm_x2y.t, cm_x2y.CM(:, 2));
+ylabel('CoG $r_y$ (cm)', 'Interpreter', 'latex', 'FontSize', font_size);
+xlabel('time (s)', 'Interpreter', 'latex', 'FontSize', font_size);
