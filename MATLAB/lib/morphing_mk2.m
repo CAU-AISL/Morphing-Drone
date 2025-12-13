@@ -192,8 +192,8 @@ classdef morphing_mk2 < handle
             obj.w_b = obj.u(5:8);    % wb3 (tilt motor omega)
 
             obj.z_error = zeros(18,1);
-            max_rate_alpha = 420; %degree/s
-            max_rate_beta = 420;
+            max_rate_alpha = 636; %degree/s
+            max_rate_beta = 486;
 
             obj.servo_alpha = ServoMotorModel(4, max_rate_alpha, obj.dt);
             obj.servo_beta  = ServoMotorModel(4, max_rate_beta,  obj.dt);
@@ -212,8 +212,6 @@ classdef morphing_mk2 < handle
             matC = eye(18);
 
             matD = zeros(6,6);
-
-
 
             n = size(matA,1);
             m = size(matB,2);
@@ -234,7 +232,6 @@ classdef morphing_mk2 < handle
                     zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3), zeros(3,3), eye(3)];
             end
             R = eye(m);
-
             [K, S, e] = lqr(matA, matB, Q, R);
             obj.K_lqr = K;  % 객체 속성에 저장
 
@@ -533,10 +530,6 @@ classdef morphing_mk2 < handle
             obj.phi_des = pi/180*refSig('phi_des');
             obj.theta_des = pi/180*refSig('theta_des');
             obj.psi_des = pi/180*refSig('psi_des');
-
-
-
-            %% 실제 코드
 
             % 매핑 인덱스 정의 (obj.x의 인덱스를 z_current의 인덱스에 대응)
             mapping = [1 2 3 10 11 12 4 5 6 13 14 15 7 8 9 16 17 18];
